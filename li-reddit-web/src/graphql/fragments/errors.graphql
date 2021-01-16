@@ -1,0 +1,9 @@
+fragment CoachError on FieldError {
+  field
+  message
+}
+
+fragment StudentError on StudentFieldError {
+  field
+  message
+}

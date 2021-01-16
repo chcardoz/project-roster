@@ -1,0 +1,7 @@
+fragment BasicUser on Coach {
+  id
+  firstName
+  lastName
+  username
+  email
+}

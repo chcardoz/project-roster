@@ -1,0 +1,8 @@
+query AllStudents {
+  allStudents {
+    firstName
+    lastName
+    email
+    population
+  }
+}

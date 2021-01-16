@@ -1,0 +1,14 @@
+fragment BasicStudent on Student {
+  id
+  email
+  firstName
+  lastName
+  population
+  isActive
+  meetingFrequency
+  modeOfMeeting
+  dateLastMet
+  dateLastOutreach
+  meetingCount
+  assignedCoachID
+}
