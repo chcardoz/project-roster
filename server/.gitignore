@@ -1,3 +1,3 @@
 dist
 node_modules
-sendEmail.ts
+src/utils/sendEmail.ts
