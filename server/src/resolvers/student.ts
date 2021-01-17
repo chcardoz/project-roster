@@ -35,6 +35,7 @@ class StudentResponse {
 export class StudentResolver {
   @Query(() => [Student])
   async allStudents(
+    @Arg("coachID") coachID: number,
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
   ): Promise<Student[]> {
@@ -42,6 +43,9 @@ export class StudentResolver {
     const query = getConnection()
       .getRepository(Student)
       .createQueryBuilder("s")
+      .where('"assignedCoachID" = :coachID', {
+        coachID: coachID,
+      })
       .orderBy('"createdAt"', "DESC")
       .take(realLimit);
 

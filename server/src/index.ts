@@ -12,6 +12,8 @@ const main = async () => {
   console.log(connection.isConnected);
   await connection.runMigrations();
 
+  // await Student.delete({});
+
   //Set up an express server
   const app = express();
 
