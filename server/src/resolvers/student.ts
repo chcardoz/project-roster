@@ -3,6 +3,7 @@ import { validateNewStudent } from "../utils/validateNewStudent";
 import {
   Arg,
   Field,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -33,9 +34,24 @@ class StudentResponse {
 @Resolver()
 export class StudentResolver {
   @Query(() => [Student])
-  async allStudents(): Promise<Student[]> {
-    const students = await Student.find();
-    return students;
+  async allStudents(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<Student[]> {
+    const realLimit = Math.min(20, limit);
+    const query = getConnection()
+      .getRepository(Student)
+      .createQueryBuilder("s")
+      .orderBy('"createdAt"', "DESC")
+      .take(realLimit);
+
+    if (cursor) {
+      query.where('"createdAt" < :cursor', {
+        cursor: new Date(parseInt(cursor)),
+      });
+    }
+
+    return query.getMany();
   }
 
   @Mutation(() => StudentResponse)

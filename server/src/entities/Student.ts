@@ -1,6 +1,7 @@
 import { Field, Int, ObjectType } from "type-graphql";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { Coach } from "./Coach";
+import { Meeting } from "./Meeting";
 import { Person } from "./Person";
 
 @ObjectType()
@@ -30,14 +31,13 @@ export class Student extends Person {
   @Column({ default: null })
   dateLastOutreach: Date;
 
-  @Field(() => Int)
-  @Column({ default: 0 })
-  meetingCount!: number;
-
   @Field(() => Int, { nullable: true })
   @Column({ default: null })
   assignedCoachID: number;
 
   @ManyToOne(() => Coach, (coach) => coach.students)
   assignedCoach: Coach;
+
+  @OneToMany(() => Meeting, (meeting) => meeting.studentID)
+  meetings: Meeting[];
 }

@@ -1,11 +1,11 @@
-import "reflect-metadata";
-import typeormConfig from "./typeorm.config";
+import connectRedis from "connect-redis";
 import express from "express";
 import session from "express-session";
-import connectRedis from "connect-redis";
-import { createConnection } from "typeorm";
-import { applyMiddleware } from "./utils/applyMiddleware";
 import Redis from "ioredis";
+import "reflect-metadata";
+import { createConnection } from "typeorm";
+import typeormConfig from "./typeorm.config";
+import { applyMiddleware } from "./utils/applyMiddleware";
 
 const main = async () => {
   const connection = await createConnection(typeormConfig);
