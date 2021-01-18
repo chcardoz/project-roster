@@ -37,7 +37,7 @@ export class StudentResolver {
   async allStudents(
     @Arg("coachID") coachID: number,
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
   ): Promise<Student[]> {
     const realLimit = Math.min(20, limit);
     const query = getConnection()
@@ -46,11 +46,12 @@ export class StudentResolver {
       .where('"assignedCoachID" = :coachID', {
         coachID: coachID,
       })
-      .orderBy('"createdAt"', "DESC")
+      .orderBy('"createdAt"', "DESC") //What you want to order the list by
       .take(realLimit);
 
     if (cursor) {
       query.where('"createdAt" < :cursor', {
+        //Based on ordering, thats what you will paginate
         cursor: new Date(parseInt(cursor)),
       });
     }

@@ -1,5 +1,5 @@
-query AllStudents {
-  allStudents {
+query AllStudents($coachID: Int!, $limit: Int!, $cursor: String!) {
+  allStudents(coachID: $coachID, limit: $limit, cursor: $cursor) {
     firstName
     lastName
     email
