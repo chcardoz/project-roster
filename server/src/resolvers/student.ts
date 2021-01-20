@@ -23,6 +23,14 @@ class StudentFieldError {
 }
 
 @ObjectType()
+class PaginatedStudents {
+  @Field(() => [Student])
+  allStudents: Student[];
+  @Field()
+  hasMore: boolean;
+}
+
+@ObjectType()
 class StudentResponse {
   @Field(() => [StudentFieldError], { nullable: true })
   errors?: StudentFieldError[];
@@ -33,13 +41,14 @@ class StudentResponse {
 
 @Resolver()
 export class StudentResolver {
-  @Query(() => [Student])
+  @Query(() => PaginatedStudents)
   async allStudents(
     @Arg("coachID") coachID: number,
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
-  ): Promise<Student[]> {
+  ): Promise<PaginatedStudents> {
     const realLimit = Math.min(20, limit);
+    const realLimitPlusOne = realLimit + 1;
     const query = getConnection()
       .getRepository(Student)
       .createQueryBuilder("s")
@@ -56,7 +65,11 @@ export class StudentResolver {
       });
     }
 
-    return query.getMany();
+    const students = await query.getMany();
+    return {
+      allStudents: students.slice(0, realLimit),
+      hasMore: students.length === realLimitPlusOne,
+    };
   }
 
   @Mutation(() => StudentResponse)

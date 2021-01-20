@@ -18,7 +18,14 @@ export type Query = {
   __typename?: 'Query';
   allCoaches: Array<Coach>;
   currentCoach?: Maybe<Coach>;
-  allStudents: Array<Student>;
+  allStudents: PaginatedStudents;
+};
+
+
+export type QueryAllStudentsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  coachID: Scalars['Float'];
 };
 
 export type Coach = {
@@ -31,6 +38,12 @@ export type Coach = {
   lastName: Scalars['String'];
   username: Scalars['String'];
   isCoordinator: Scalars['Boolean'];
+};
+
+export type PaginatedStudents = {
+  __typename?: 'PaginatedStudents';
+  allStudents: Array<Student>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Student = {
@@ -47,7 +60,6 @@ export type Student = {
   modeOfMeeting?: Maybe<Scalars['String']>;
   dateLastMet?: Maybe<Scalars['String']>;
   dateLastOutreach?: Maybe<Scalars['String']>;
-  meetingCount: Scalars['Int'];
   assignedCoachID?: Maybe<Scalars['Int']>;
 };
 
@@ -135,7 +147,7 @@ export type StudentDetailsInput = {
 
 export type BasicStudentFragment = (
   { __typename?: 'Student' }
-  & Pick<Student, 'id' | 'email' | 'firstName' | 'lastName' | 'population' | 'isActive' | 'meetingFrequency' | 'modeOfMeeting' | 'dateLastMet' | 'dateLastOutreach' | 'meetingCount' | 'assignedCoachID'>
+  & Pick<Student, 'id' | 'email' | 'firstName' | 'lastName' | 'population' | 'isActive' | 'meetingFrequency' | 'modeOfMeeting' | 'dateLastMet' | 'dateLastOutreach' | 'assignedCoachID'>
 );
 
 export type BasicUserFragment = (
@@ -257,15 +269,23 @@ export type RegisterMutation = (
   ) }
 );
 
-export type AllStudentsQueryVariables = Exact<{ [key: string]: never; }>;
+export type AllStudentsQueryVariables = Exact<{
+  coachID: Scalars['Float'];
+  limit: Scalars['Int'];
+  cursor: Scalars['String'];
+}>;
 
 
 export type AllStudentsQuery = (
   { __typename?: 'Query' }
-  & { allStudents: Array<(
-    { __typename?: 'Student' }
-    & Pick<Student, 'firstName' | 'lastName' | 'email' | 'population'>
-  )> }
+  & { allStudents: (
+    { __typename?: 'PaginatedStudents' }
+    & Pick<PaginatedStudents, 'hasMore'>
+    & { allStudents: Array<(
+      { __typename?: 'Student' }
+      & Pick<Student, 'firstName' | 'lastName' | 'email' | 'population'>
+    )> }
+  ) }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -323,7 +343,6 @@ export const BasicStudentFragmentDoc = gql`
   modeOfMeeting
   dateLastMet
   dateLastOutreach
-  meetingCount
   assignedCoachID
 }
     `;
@@ -410,12 +429,15 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const AllStudentsDocument = gql`
-    query AllStudents {
-  allStudents {
-    firstName
-    lastName
-    email
-    population
+    query AllStudents($coachID: Float!, $limit: Int!, $cursor: String!) {
+  allStudents(coachID: $coachID, limit: $limit, cursor: $cursor) {
+    hasMore
+    allStudents {
+      firstName
+      lastName
+      email
+      population
+    }
   }
 }
     `;

@@ -1,8 +1,11 @@
-query AllStudents($coachID: Int!, $limit: Int!, $cursor: String!) {
+query AllStudents($coachID: Float!, $limit: Int!, $cursor: String!) {
   allStudents(coachID: $coachID, limit: $limit, cursor: $cursor) {
-    firstName
-    lastName
-    email
-    population
+    hasMore
+    allStudents {
+      firstName
+      lastName
+      email
+      population
+    }
   }
 }

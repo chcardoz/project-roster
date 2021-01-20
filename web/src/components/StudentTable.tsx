@@ -9,18 +9,24 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useAllStudentsQuery } from "../generated/graphql";
 
 interface StudentTableProps {}
 
 export const StudentTable: React.FC<StudentTableProps> = ({}) => {
-  const [{ data }] = useAllStudentsQuery();
+  const [variables, setVariables] = useState({
+    limit: 12,
+    cursor: null as null | string,
+  });
+  const [{ data, fetching }] = useAllStudentsQuery({
+    variables: {
+      coachID: 2,
+      ...variables,
+    },
+  });
   return (
     <>
-      <Text fontSize={20} py={5}>
-        Wow! you have {data?.allStudents.length} students
-      </Text>
       <Table variant="striped" colorScheme="facebook">
         <Thead>
           <Tr>
@@ -32,7 +38,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
           </Tr>
         </Thead>
         <Tbody>
-          {data?.allStudents.map((student) => (
+          {data?.allStudents.allStudents.map((student) => (
             <Tr>
               <Td>{student.firstName}</Td>
               <Td>{student.lastName}</Td>

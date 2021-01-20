@@ -9,6 +9,5 @@ fragment BasicStudent on Student {
   modeOfMeeting
   dateLastMet
   dateLastOutreach
-  meetingCount
   assignedCoachID
 }
