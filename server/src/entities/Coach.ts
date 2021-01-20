@@ -18,7 +18,10 @@ export class Coach extends Person {
   @Column({ default: false })
   isCoordinator!: boolean;
 
-  @OneToMany(() => Student, (student) => student.assignedCoach)
+  @Field(() => [Student], { nullable: true })
+  @OneToMany(() => Student, (student) => student.assignedCoach, {
+    nullable: true,
+  })
   students: Student[];
 
   @OneToMany(() => Meeting, (meeting) => meeting.coachID)

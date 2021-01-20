@@ -272,7 +272,7 @@ export type RegisterMutation = (
 export type AllStudentsQueryVariables = Exact<{
   coachID: Scalars['Float'];
   limit: Scalars['Int'];
-  cursor: Scalars['String'];
+  cursor?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -283,7 +283,7 @@ export type AllStudentsQuery = (
     & Pick<PaginatedStudents, 'hasMore'>
     & { allStudents: Array<(
       { __typename?: 'Student' }
-      & Pick<Student, 'firstName' | 'lastName' | 'email' | 'population'>
+      & Pick<Student, 'createdAt' | 'firstName' | 'lastName' | 'email' | 'population'>
     )> }
   ) }
 );
@@ -429,10 +429,11 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const AllStudentsDocument = gql`
-    query AllStudents($coachID: Float!, $limit: Int!, $cursor: String!) {
+    query AllStudents($coachID: Float!, $limit: Int!, $cursor: String) {
   allStudents(coachID: $coachID, limit: $limit, cursor: $cursor) {
     hasMore
     allStudents {
+      createdAt
       firstName
       lastName
       email

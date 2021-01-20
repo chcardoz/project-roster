@@ -6,25 +6,54 @@ import {
   Th,
   Tbody,
   Td,
-  Text,
   Button,
+  Alert,
+  AlertIcon,
+  Flex,
+  Skeleton,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useAllStudentsQuery } from "../generated/graphql";
+import { useAllStudentsQuery, useMeQuery } from "../generated/graphql";
 
 interface StudentTableProps {}
 
 export const StudentTable: React.FC<StudentTableProps> = ({}) => {
   const [variables, setVariables] = useState({
-    limit: 12,
+    limit: 5,
     cursor: null as null | string,
   });
+  const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
-      coachID: 2,
+      coachID: coachData?.currentCoach.id,
       ...variables,
     },
   });
+
+  let tableBody = null;
+  if (!fetching && !data) {
+    <Alert status="error">
+      <AlertIcon />
+      Your query failed for some reason
+    </Alert>;
+  } else if (!data && fetching) {
+    tableBody = <Skeleton />;
+  } else {
+    tableBody = data?.allStudents.allStudents.map((student) => (
+      <Tr>
+        <Td>{student.firstName}</Td>
+        <Td>{student.lastName}</Td>
+        <Td>{student.email}</Td>
+        <Td>{student.population}</Td>
+        <Td>
+          <Button rounded="full" size="xs">
+            <HamburgerIcon />
+          </Button>
+        </Td>
+      </Tr>
+    ));
+  }
+
   return (
     <>
       <Table variant="striped" colorScheme="facebook">
@@ -37,22 +66,28 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
             <Th>Options</Th>
           </Tr>
         </Thead>
-        <Tbody>
-          {data?.allStudents.allStudents.map((student) => (
-            <Tr>
-              <Td>{student.firstName}</Td>
-              <Td>{student.lastName}</Td>
-              <Td>{student.email}</Td>
-              <Td>{student.population}</Td>
-              <Td>
-                <Button rounded="full" size="xs">
-                  <HamburgerIcon />
-                </Button>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
+        <Tbody>{tableBody}</Tbody>
       </Table>
+      {data && data?.allStudents.hasMore ? (
+        <Flex>
+          <Button
+            onClick={() => {
+              setVariables({
+                limit: variables.limit,
+                cursor:
+                  data.allStudents.allStudents[
+                    data.allStudents.allStudents.length - 1
+                  ].createdAt,
+              });
+            }}
+            isLoading={fetching}
+            m="auto"
+            my={8}
+          >
+            load more
+          </Button>
+        </Flex>
+      ) : null}
     </>
   );
 };
