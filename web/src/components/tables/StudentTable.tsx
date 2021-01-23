@@ -15,9 +15,11 @@ import {
 import React, { useState } from "react";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
 
-interface StudentTableProps {}
+interface StudentTableProps {
+  population: string;
+}
 
-export const StudentTable: React.FC<StudentTableProps> = ({}) => {
+export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   const [variables, setVariables] = useState({
     limit: 5,
     cursor: null as null | string,
@@ -25,6 +27,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
+      population: population,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
       ...variables, //your pagination parameters like limit and cursor
@@ -56,7 +59,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
         <Td>{student.firstName}</Td>
         <Td>{student.lastName}</Td>
         <Td>{student.email}</Td>
-        <Td>{student.population}</Td>
         <Td>
           <Button rounded="full" size="xs">
             <HamburgerIcon />
@@ -74,7 +76,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
             <Th>First Name</Th>
             <Th>Last Name</Th>
             <Th>Email</Th>
-            <Th>Population</Th>
             <Th>Options</Th>
           </Tr>
         </Thead>

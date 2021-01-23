@@ -15,9 +15,14 @@ export const PopulationTabs: React.FC<PopulationTabsProps> = ({}) => {
 
       <TabPanels>
         <TabPanel>
-          <StudentTable />
+          <StudentTable population="star" />
         </TabPanel>
-        <TabPanel></TabPanel>
+        <TabPanel>
+          <StudentTable population="span" />
+        </TabPanel>
+        <TabPanel>
+          <StudentTable population="veteran" />
+        </TabPanel>
         <TabPanel>
           <p>three!</p>
         </TabPanel>

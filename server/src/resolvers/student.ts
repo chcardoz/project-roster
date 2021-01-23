@@ -45,6 +45,7 @@ class StudentResponse {
 export class StudentResolver {
   @Query(() => PaginatedStudents)
   async allStudents(
+    @Arg("population") population: string,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
@@ -60,6 +61,9 @@ export class StudentResolver {
       query
         .where('"assignedCoachID" = :coachID', {
           coachID: coachID,
+        })
+        .where("population = :population", {
+          population,
         })
         .orderBy('"createdAt"', "DESC") //What you want to order the list by
         .take(realLimitPlusOne);
