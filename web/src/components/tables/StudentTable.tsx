@@ -13,7 +13,7 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useAllStudentsQuery, useMeQuery } from "../generated/graphql";
+import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
 
 interface StudentTableProps {}
 

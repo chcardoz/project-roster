@@ -16,7 +16,7 @@ import { Formik, Form } from "formik";
 import React from "react";
 import { useRegisterMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
-import { InputField } from "../InputField";
+import { InputField } from "../input/InputField";
 
 interface RegisterModalProps {
   isOpen: boolean;

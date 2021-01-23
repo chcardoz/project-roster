@@ -17,8 +17,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useCreateStudentMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
-import { InputField } from "../InputField";
-import { SelectField } from "../SelectField";
+import { InputField } from "../input/InputField";
+import { SelectField } from "../input/SelectField";
 
 interface CreateStudentModalProps {
   isOpen: boolean;
@@ -105,7 +105,7 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                 <Box mt={4}>
                   <InputField
                     name="lastName"
-                    placeholder="lastname"
+                    placeholder="last name"
                     label="Last Name"
                   />
                 </Box>
@@ -118,14 +118,12 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                   />
                 </Box>
                 <Box mt={4}>
-                  <SelectField
-                    placeholder="Select population"
-                    label="Population"
-                    name="population"
-                  >
-                    {population.map((value) => {
-                      <option value={value}>{value}</option>;
-                    })}
+                  <SelectField label="Population" name="population">
+                    <option value="star">STAR</option>
+                    <option value="span">SPAN</option>
+                    <option value="athlete">Atlete</option>
+                    <option value="veteran">Veteran</option>
+                    <option value="voluntary">Voluntary</option>
                   </SelectField>
                 </Box>
 

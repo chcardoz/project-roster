@@ -153,7 +153,7 @@ export type BasicStudentFragment = (
 
 export type BasicUserFragment = (
   { __typename?: 'Coach' }
-  & Pick<Coach, 'id' | 'firstName' | 'lastName' | 'username' | 'email'>
+  & Pick<Coach, 'id' | 'firstName' | 'lastName' | 'username' | 'email' | 'isCoordinator'>
 );
 
 export type BasicCoachResponseFragment = (
@@ -313,6 +313,7 @@ export const BasicUserFragmentDoc = gql`
   lastName
   username
   email
+  isCoordinator
 }
     `;
 export const BasicCoachResponseFragmentDoc = gql`

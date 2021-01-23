@@ -4,4 +4,5 @@ fragment BasicUser on Coach {
   lastName
   username
   email
+  isCoordinator
 }

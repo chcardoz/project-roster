@@ -1,7 +1,7 @@
 import { ChakraProvider, Flex } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
 import { AppProps } from "next/app";
-import { Navbar } from "../components/Navbar";
+import { Navbar } from "../components/navigation/Navbar";
 import theme from "../theme/index";
 import { createUrqlClient } from "../utils/createUrqlClient";
 

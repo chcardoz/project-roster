@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { CreateStudentModal } from "../components/modals/CreateStudent";
 import { useMeQuery } from "../generated/graphql";
-import { PopulationTabs } from "../components/PopulationTabs";
+import { PopulationTabs } from "../components/tables/PopulationTabs";
 
 const Roster = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

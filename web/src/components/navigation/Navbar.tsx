@@ -11,12 +11,13 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import React from "react";
-import { useMeQuery } from "../generated/graphql";
-import { isServer } from "../utils/isServer";
+import { useMeQuery } from "../../generated/graphql";
+import { isServer } from "../../utils/isServer";
 import { CoachLinks } from "./CoachLinks";
-import LoginModal from "./modals/LoginModal";
-import { RegisterModal } from "./modals/RegisterModal";
-import { UserAvatar } from "./UserAvatar";
+import LoginModal from "../modals/LoginModal";
+import { RegisterModal } from "../modals/RegisterModal";
+import { UserAvatar } from "../UserAvatar";
+import { CoordinatorLinks } from "./CoordinatorLinks";
 
 interface NavBarProps {}
 
@@ -35,6 +36,7 @@ export const Navbar: React.FC<NavBarProps> = () => {
   const textColor = { light: "black", dark: "white" };
 
   let body = null;
+  let links = null;
   if (!data?.currentCoach) {
     body = (
       <>
@@ -56,6 +58,11 @@ export const Navbar: React.FC<NavBarProps> = () => {
     );
   } else {
     body = <UserAvatar color={textColor[colorMode]} data={data} />;
+    if (data?.currentCoach.isCoordinator) {
+      links = <CoordinatorLinks textColor={textColor[colorMode]} />;
+    } else {
+      links = <CoachLinks textColor={textColor[colorMode]} />;
+    }
   }
 
   return (
@@ -76,7 +83,7 @@ export const Navbar: React.FC<NavBarProps> = () => {
         <Heading>ROSTER</Heading>
       </Box>
       <Spacer />
-      <CoachLinks textColor={textColor[colorMode]} />
+      {links}
       <Spacer />
       <HStack>
         <Box pr={8}>{body}</Box>

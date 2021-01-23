@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useLoginMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
-import { InputField } from "../InputField";
+import { InputField } from "../input/InputField";
 import NextLink from "next/link";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../../utils/createUrqlClient";

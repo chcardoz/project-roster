@@ -8,6 +8,8 @@ import {
   PopoverHeader,
   PopoverBody,
   Button,
+  Badge,
+  Flex,
 } from "@chakra-ui/react";
 import React from "react";
 import { MeQuery, useLogoutMutation } from "../generated/graphql";
@@ -27,7 +29,14 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ data, color }) => {
       <PopoverContent>
         <PopoverArrow />
         <PopoverCloseButton />
-        <PopoverHeader color={color}>Account Options</PopoverHeader>
+        <PopoverHeader color={color}>
+          <Flex align="center">
+            {data?.currentCoach?.firstName} {data?.currentCoach?.lastName}
+            <Badge ml={5} colorScheme="green">
+              {data?.currentCoach?.isCoordinator ? "Coordinator" : "Coach"}
+            </Badge>
+          </Flex>
+        </PopoverHeader>
         <PopoverBody maxW="sm">
           <Button
             onClick={() => {
