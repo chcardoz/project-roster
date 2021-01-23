@@ -25,7 +25,7 @@ export type Query = {
 export type QueryAllStudentsArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
-  coachID: Scalars['Float'];
+  coachID?: Maybe<Scalars['Float']>;
 };
 
 export type Coach = {
@@ -38,12 +38,7 @@ export type Coach = {
   lastName: Scalars['String'];
   username: Scalars['String'];
   isCoordinator: Scalars['Boolean'];
-};
-
-export type PaginatedStudents = {
-  __typename?: 'PaginatedStudents';
-  allStudents: Array<Student>;
-  hasMore: Scalars['Boolean'];
+  students?: Maybe<Array<Student>>;
 };
 
 export type Student = {
@@ -61,6 +56,12 @@ export type Student = {
   dateLastMet?: Maybe<Scalars['String']>;
   dateLastOutreach?: Maybe<Scalars['String']>;
   assignedCoachID?: Maybe<Scalars['Int']>;
+};
+
+export type PaginatedStudents = {
+  __typename?: 'PaginatedStudents';
+  allStudents: Array<Student>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Mutation = {
@@ -283,7 +284,7 @@ export type AllStudentsQuery = (
     & Pick<PaginatedStudents, 'hasMore'>
     & { allStudents: Array<(
       { __typename?: 'Student' }
-      & Pick<Student, 'createdAt' | 'firstName' | 'lastName' | 'email' | 'population'>
+      & Pick<Student, 'id' | 'createdAt' | 'firstName' | 'lastName' | 'email' | 'population'>
     )> }
   ) }
 );
@@ -433,6 +434,7 @@ export const AllStudentsDocument = gql`
   allStudents(coachID: $coachID, limit: $limit, cursor: $cursor) {
     hasMore
     allStudents {
+      id
       createdAt
       firstName
       lastName

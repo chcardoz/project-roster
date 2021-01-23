@@ -3,6 +3,7 @@ import { validateNewStudent } from "../utils/validateNewStudent";
 import {
   Arg,
   Field,
+  Float,
   Int,
   Mutation,
   ObjectType,
@@ -22,6 +23,7 @@ class StudentFieldError {
   message: string;
 }
 
+//The data shape when you paginate the student table.
 @ObjectType()
 class PaginatedStudents {
   @Field(() => [Student])
@@ -43,7 +45,7 @@ class StudentResponse {
 export class StudentResolver {
   @Query(() => PaginatedStudents)
   async allStudents(
-    @Arg("coachID") coachID: number,
+    @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
   ): Promise<PaginatedStudents> {
@@ -51,24 +53,36 @@ export class StudentResolver {
     const realLimitPlusOne = realLimit + 1;
     const query = getConnection()
       .getRepository(Student)
-      .createQueryBuilder("s")
-      .where('"assignedCoachID" = :coachID', {
-        coachID: coachID,
-      })
-      .orderBy('"createdAt"', "DESC") //What you want to order the list by
-      .take(realLimit);
+      .createQueryBuilder("s");
 
-    if (cursor) {
-      query.where('"createdAt" < :cursor', {
-        //Based on ordering, thats what you will paginate
-        cursor: new Date(parseInt(cursor)),
-      });
+    //Only care about pagination if a coach id is given
+    if (coachID) {
+      query
+        .where('"assignedCoachID" = :coachID', {
+          coachID: coachID,
+        })
+        .orderBy('"createdAt"', "DESC") //What you want to order the list by
+        .take(realLimitPlusOne);
+
+      //TODO: Do not allow pagination for coaches who have no students. It does some weird stuff if you allow that.
+      if (cursor) {
+        query.where('"createdAt" < :cursor', {
+          //Based on ordering, thats what you will paginate
+          cursor: new Date(parseInt(cursor)),
+        });
+      }
+
+      const students = await query.getMany();
+      return {
+        allStudents: students.slice(0, realLimit),
+        hasMore: students.length === realLimitPlusOne,
+      };
     }
 
-    const students = await query.getMany();
+    //The same data shape if you entered a coach id who has no students.
     return {
-      allStudents: students.slice(0, realLimit),
-      hasMore: students.length === realLimitPlusOne,
+      allStudents: [],
+      hasMore: false,
     };
   }
 

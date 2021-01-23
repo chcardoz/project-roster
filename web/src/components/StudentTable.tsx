@@ -25,22 +25,34 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
-      coachID: coachData?.currentCoach.id,
-      ...variables,
+      coachID:
+        coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
+      ...variables, //your pagination parameters like limit and cursor
     },
   });
 
+  //This is a way to account for all cases of data, null data and fetching data
   let tableBody = null;
   if (!fetching && !data) {
-    <Alert status="error">
-      <AlertIcon />
-      Your query failed for some reason
-    </Alert>;
+    <Tr>
+      <Td>
+        <Alert status="error">
+          <AlertIcon />
+          Your query failed for some reason
+        </Alert>
+      </Td>
+    </Tr>;
   } else if (!data && fetching) {
-    tableBody = <Skeleton />;
+    tableBody = (
+      <Tr>
+        <Td>
+          <Skeleton />
+        </Td>
+      </Tr>
+    );
   } else {
     tableBody = data?.allStudents.allStudents.map((student) => (
-      <Tr>
+      <Tr key={student.id}>
         <Td>{student.firstName}</Td>
         <Td>{student.lastName}</Td>
         <Td>{student.email}</Td>
@@ -84,7 +96,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({}) => {
             m="auto"
             my={8}
           >
-            load more
+            next page
           </Button>
         </Flex>
       ) : null}

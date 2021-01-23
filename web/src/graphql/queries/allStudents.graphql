@@ -2,6 +2,7 @@ query AllStudents($coachID: Float!, $limit: Int!, $cursor: String) {
   allStudents(coachID: $coachID, limit: $limit, cursor: $cursor) {
     hasMore
     allStudents {
+      id
       createdAt
       firstName
       lastName
