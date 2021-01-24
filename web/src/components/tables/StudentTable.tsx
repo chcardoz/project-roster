@@ -1,16 +1,20 @@
 import { HamburgerIcon } from "@chakra-ui/icons";
 import {
-  Table,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-  Button,
   Alert,
   AlertIcon,
+  Button,
   Flex,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Skeleton,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
@@ -60,9 +64,16 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
         <Td>{student.lastName}</Td>
         <Td>{student.email}</Td>
         <Td>
-          <Button rounded="full" size="xs">
-            <HamburgerIcon />
-          </Button>
+          <Menu>
+            <MenuButton as={Button}>Actions</MenuButton>
+            <MenuList>
+              <MenuItem>Request to be removed</MenuItem>
+              <MenuItem>Edit Details</MenuItem>
+              <MenuItem>Remove</MenuItem>
+              <MenuItem>Add outreach</MenuItem>
+              <MenuItem>Add a meeting</MenuItem>
+            </MenuList>
+          </Menu>
         </Td>
       </Tr>
     ));
@@ -76,7 +87,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
             <Th>First Name</Th>
             <Th>Last Name</Th>
             <Th>Email</Th>
-            <Th>Options</Th>
+            <Th></Th>
           </Tr>
         </Thead>
         <Tbody>{tableBody}</Tbody>
@@ -86,7 +97,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
           <Button
             onClick={() => {
               setVariables({
-                limit: variables.limit,
+                limit: variables.limit + 5,
                 cursor:
                   data.allStudents.allStudents[
                     data.allStudents.allStudents.length - 1
@@ -95,7 +106,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
             }}
             isLoading={fetching}
             m="auto"
-            my={8}
+            mt={5}
           >
             next page
           </Button>

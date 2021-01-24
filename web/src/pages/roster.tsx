@@ -27,11 +27,11 @@ const Roster = () => {
     header = (
       <>
         <Heading>Roster Management</Heading>
-        <Text>
+        <Text mt={3}>
           This is a place to locate all of your students and their details. You
           cannot add or delete students but you can view their details.
         </Text>
-        <Button onClick={onOpen} rounded="full">
+        <Button mt={5} onClick={onOpen} rounded="full">
           Create Student
         </Button>
         <CreateStudentModal isOpen={isOpen} onClose={onClose} />

@@ -12,7 +12,7 @@ import { Student } from "./Student";
 
 @ObjectType()
 @Entity()
-export class Meeting {
+export class Outreach {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id!: number;
@@ -41,9 +41,9 @@ export class Meeting {
 
   @Field(() => String)
   @Column()
-  meetingDate: Date;
+  outreachDate: Date;
 
-  @Field(() => Int)
+  @Field(() => String)
   @Column()
-  duration: number;
+  type: string;
 }

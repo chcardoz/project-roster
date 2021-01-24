@@ -62,18 +62,20 @@ export class StudentResolver {
         .where('"assignedCoachID" = :coachID', {
           coachID: coachID,
         })
-        .where("population = :population", {
-          population,
-        })
         .orderBy('"createdAt"', "DESC") //What you want to order the list by
         .take(realLimitPlusOne);
 
+      const test = await query.getMany();
       //TODO: Do not allow pagination for coaches who have no students. It does some weird stuff if you allow that.
-      if (cursor) {
-        query.where('"createdAt" < :cursor', {
-          //Based on ordering, thats what you will paginate
-          cursor: new Date(parseInt(cursor)),
-        });
+      if (cursor && test.length !== 0) {
+        query
+          .where("population = :population", {
+            population,
+          })
+          .where('"createdAt" < :cursor', {
+            //Based on ordering, thats what you will paginate
+            cursor: new Date(parseInt(cursor)),
+          });
       }
 
       const students = await query.getMany();
