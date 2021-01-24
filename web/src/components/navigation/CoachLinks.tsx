@@ -38,9 +38,12 @@ export const CoachLinks: React.FC<CoachLinksProps> = ({ textColor }) => {
           <a>Meetings</a>
         </Link>
       </Box>
-      <Box position="relative" opacity={router.pathname !== "/list" ? 0.4 : 1}>
-        <Link href="/list">
-          <a>List</a>
+      <Box
+        position="relative"
+        opacity={router.pathname !== "/outreach" ? 0.4 : 1}
+      >
+        <Link href="/outreach">
+          <a>Outreach</a>
         </Link>
       </Box>
     </Stack>

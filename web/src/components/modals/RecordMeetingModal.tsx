@@ -1,18 +1,18 @@
 import {
+  useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  Center,
+  ModalCloseButton,
+  ModalBody,
   Box,
   Button,
-  Center,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
   ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
-  useToast,
 } from "@chakra-ui/react";
-import { Form, Formik } from "formik";
+import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
 import { useCreateStudentMutation } from "../../generated/graphql";
@@ -20,12 +20,12 @@ import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../input/InputField";
 import { SelectField } from "../input/SelectField";
 
-interface CreateStudentModalProps {
+interface RecordMeetingModalProps {
   isOpen: boolean;
   onClose(): void;
 }
 
-export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
+export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
   isOpen,
   onClose,
 }) => {
@@ -45,7 +45,7 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
         <ModalHeader>
           <Center>
             <Text fontSize={30} fontWeight="bold">
-              CREATE NEW STUDENT
+              RECORD MEETING
             </Text>
           </Center>
         </ModalHeader>
