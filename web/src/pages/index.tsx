@@ -15,9 +15,9 @@ const Index = () => {
     <>
       <Wrapper>
         {data?.currentCoach === null ? (
-          <Heading>Please log in to see you dashboard</Heading>
+          <Heading>PLEASE LOG IN</Heading>
         ) : (
-          <Heading>Hello there {data?.currentCoach?.firstName}</Heading>
+          <Heading>HELLO THERE {data?.currentCoach?.firstName}</Heading>
         )}
       </Wrapper>
     </>

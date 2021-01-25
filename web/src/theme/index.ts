@@ -3,7 +3,11 @@ import { createBreakpoints } from "@chakra-ui/theme-tools";
 import { colors } from "./colors";
 import styles from "./styles";
 
-const fonts = { mono: `'Helvetica', monospace` };
+const fonts = {
+  mono: `'Menlo', monospace`,
+  heading: "Aclonica",
+  body: "Space Mono",
+};
 
 const breakpoints = createBreakpoints({
   sm: "40em",

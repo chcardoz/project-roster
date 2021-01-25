@@ -1,4 +1,4 @@
-import { StudentDetailsInput } from "src/resolvers/StudentDetailsInput";
+import { StudentDetailsInput } from "src/resolvers/types/StudentDetailsInput";
 
 export const validateNewStudent = (options: StudentDetailsInput) => {
   if (options.firstName.length == 0) {

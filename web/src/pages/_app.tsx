@@ -4,10 +4,12 @@ import { AppProps } from "next/app";
 import { Navbar } from "../components/navigation/Navbar";
 import theme from "../theme/index";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import Fonts from "../theme/Fonts";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider resetCSS theme={theme}>
+      <Fonts />
       <Flex direction="column" align="center" justify="center">
         <Navbar />
         <Component {...pageProps} />

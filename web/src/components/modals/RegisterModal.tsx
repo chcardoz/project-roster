@@ -11,6 +11,7 @@ import {
   useToast,
   Text,
   Center,
+  Heading,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import React from "react";
@@ -41,9 +42,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
       <ModalContent>
         <ModalHeader>
           <Center>
-            <Text fontSize={35} fontWeight="bold">
-              REGISTER
-            </Text>
+            <Heading>REGISTER</Heading>
           </Center>
         </ModalHeader>
         <ModalCloseButton />

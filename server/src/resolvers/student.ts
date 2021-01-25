@@ -12,7 +12,7 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { StudentDetailsInput } from "./StudentDetailsInput";
+import { StudentDetailsInput } from "./types/StudentDetailsInput";
 import { isAuth } from "../middleware/isAuth";
 
 @ObjectType()

@@ -27,14 +27,14 @@ export class Meeting {
 
   @Field(() => Int)
   @Column()
-  coachID: number;
+  coachID!: number;
 
   @ManyToOne(() => Coach, (coach) => coach.meetings)
   coach: Coach;
 
   @Field(() => Int)
   @Column()
-  studentID: number;
+  studentID!: number;
 
   @ManyToOne(() => Student, (student) => student.meetings)
   student: Student;

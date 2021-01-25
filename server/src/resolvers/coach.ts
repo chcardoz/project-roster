@@ -15,7 +15,7 @@ import {
   COORDINATORS,
   FORGET_PASSWORD_PREFIX,
 } from "../constants";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { UsernamePasswordInput } from "./types/UsernamePasswordInput";
 import {
   validateNewPassword,
   validateRegister,

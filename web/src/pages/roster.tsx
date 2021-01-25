@@ -26,7 +26,7 @@ const Roster = () => {
   } else if (data?.currentCoach !== null) {
     header = (
       <>
-        <Heading>Roster Management</Heading>
+        <Heading>STUDENT ROSTER</Heading>
         <Text mt={3}>
           This is a place to locate all of your students and their details. You
           cannot add or delete students but you can view their details.
