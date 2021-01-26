@@ -13,7 +13,7 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { StudentDetailsInput } from "./types/StudentDetailsInput";
-import { isAuth } from "../middleware/isAuth";
+import { isCoordinator } from "../middleware/isCoordinator";
 
 @ObjectType()
 class StudentFieldError {
@@ -93,7 +93,7 @@ export class StudentResolver {
   }
 
   @Mutation(() => StudentResponse)
-  @UseMiddleware(isAuth)
+  @UseMiddleware(isCoordinator)
   async createStudent(
     @Arg("options") options: StudentDetailsInput
   ): Promise<StudentResponse> {

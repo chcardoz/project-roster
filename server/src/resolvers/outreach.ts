@@ -1,7 +1,6 @@
-import { Meeting } from "../entities/Meeting";
+import { Outreach } from "../entities/Outreach";
 import { isCoach } from "src/middleware/isCoach";
 import { MyContext } from "src/types";
-import { validateNewMeeting } from "src/utils/validateNewMeeting";
 import {
   Arg,
   Ctx,
@@ -12,10 +11,11 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { MeetingInput } from "./types/MeetingInput";
+import { OutreachInput } from "./types/OutreachInput";
+import { validateNewOutreach } from "src/utils/validateNewOutreach";
 
 @ObjectType()
-class MeetingFieldError {
+class OutreachFieldError {
   @Field()
   field: string;
   @Field()
@@ -23,33 +23,33 @@ class MeetingFieldError {
 }
 
 @ObjectType()
-class MeetingResponse {
-  @Field(() => [MeetingFieldError], { nullable: true })
-  errors?: MeetingFieldError[];
+class OutreachResponse {
+  @Field(() => [OutreachFieldError], { nullable: true })
+  errors?: OutreachFieldError[];
 
-  @Field(() => Meeting, { nullable: true })
-  meeting?: Meeting;
+  @Field(() => Outreach, { nullable: true })
+  meeting?: Outreach;
 }
 
 @ObjectType()
-class PaginatedMeetings {
-  @Field(() => [Meeting])
-  allMeetings: Meeting[];
+class PaginatedOutreach {
+  @Field(() => [Outreach])
+  allMeetings: Outreach[];
   @Field()
   hasMore: boolean;
 }
 
-@Resolver()
-export class MeetingResolver {
+@Resolver(Outreach)
+export class OutreachResolver {
   //TODO: Getting the meeting details for each coach and using pagination
 
-  @Mutation(() => MeetingResponse)
+  @Mutation(() => OutreachResponse)
   @UseMiddleware(isCoach)
   async createMeeting(
-    @Arg("options") options: MeetingInput,
+    @Arg("options") options: OutreachInput,
     @Ctx() { req }: MyContext
-  ): Promise<MeetingResponse> {
-    const errors = validateNewMeeting(options);
+  ): Promise<OutreachResponse> {
+    const errors = validateNewOutreach(options);
     if (errors) {
       return { errors };
     }
@@ -58,12 +58,12 @@ export class MeetingResolver {
       const result = await getConnection()
         .createQueryBuilder()
         .insert()
-        .into(Meeting)
+        .into(Outreach)
         .values({
           studentID: options.studentID,
           coachID: parseInt(req.session.id),
-          meetingDate: new Date(parseInt(options.meetingDate)), //TODO: directly sending a date object to the date .maybe?
-          duration: options.duration,
+          outreachDate: new Date(parseInt(options.outreachDate)), //TODO: directly sending a date object to the date .maybe?
+          type: options.type,
         })
         .returning("*")
         .execute();
@@ -77,7 +77,7 @@ export class MeetingResolver {
 
   @Mutation(() => Boolean)
   async deleteMeeting(@Arg("id") id: number): Promise<boolean> {
-    await Meeting.delete(id);
+    await Outreach.delete(id);
     return true;
   }
 }
