@@ -27,7 +27,7 @@ const Meetings = () => {
   } else if (data?.currentCoach !== null) {
     header = (
       <>
-        <Heading>Meetings</Heading>
+        <Heading>MEETINGS</Heading>
         <Text mt={3}>
           Find all of your meetings here. After having a meeting with a student,
           you can record it with the button below.

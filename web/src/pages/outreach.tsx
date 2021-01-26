@@ -26,7 +26,7 @@ const Outreach = () => {
   } else if (data?.currentCoach !== null) {
     header = (
       <>
-        <Heading>Outreach</Heading>
+        <Heading>OUTREACH</Heading>
         <Text mt={3}>
           Whenever you reach out to a student, you can record the details and
           method of interaction for future reference.

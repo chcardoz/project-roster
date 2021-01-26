@@ -9,6 +9,8 @@ import cors from "cors";
 import { StudentResolver } from "../resolvers/student";
 import { Express } from "apollo-server-express/node_modules/@types/express/node_modules/@types/express-serve-static-core";
 import { Redis } from "ioredis";
+import { MeetingResolver } from "../resolvers/meeting";
+import { OutreachResolver } from "../resolvers/outreach";
 
 export async function applyMiddleware(
   app: Express,
@@ -42,7 +44,12 @@ export async function applyMiddleware(
   //Apollo Middleware for graphql endpoint
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [CoachResolver, StudentResolver],
+      resolvers: [
+        CoachResolver,
+        StudentResolver,
+        MeetingResolver,
+        OutreachResolver,
+      ],
       validate: false,
     }),
     context: ({ req, res }): MyContext => ({ req, res, redis }),

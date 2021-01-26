@@ -1,5 +1,5 @@
 import { Student } from "../entities/Student";
-import { validateNewStudent } from "../utils/validateNewStudent";
+import { validateNewStudent } from "../utils/form-validation/validateNewStudent";
 import {
   Arg,
   Field,

@@ -1,7 +1,7 @@
 import { Meeting } from "../entities/Meeting";
-import { isCoach } from "src/middleware/isCoach";
-import { MyContext } from "src/types";
-import { validateNewMeeting } from "src/utils/validateNewMeeting";
+import { isCoach } from "../middleware/isCoach";
+import { MyContext } from "../types";
+import { validateNewMeeting } from "../utils/form-validation/validateNewMeeting";
 import {
   Arg,
   Ctx,
@@ -31,13 +31,13 @@ class MeetingResponse {
   meeting?: Meeting;
 }
 
-@ObjectType()
-class PaginatedMeetings {
-  @Field(() => [Meeting])
-  allMeetings: Meeting[];
-  @Field()
-  hasMore: boolean;
-}
+// @ObjectType()
+// class PaginatedMeetings {
+//   @Field(() => [Meeting])
+//   allMeetings: Meeting[];
+//   @Field()
+//   hasMore: boolean;
+// }
 
 @Resolver()
 export class MeetingResolver {
@@ -61,7 +61,7 @@ export class MeetingResolver {
         .into(Meeting)
         .values({
           studentID: options.studentID,
-          coachID: parseInt(req.session.id),
+          coachID: req.session.userId,
           meetingDate: new Date(parseInt(options.meetingDate)), //TODO: directly sending a date object to the date .maybe?
           duration: options.duration,
         })

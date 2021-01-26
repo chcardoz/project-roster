@@ -19,7 +19,7 @@ import { UsernamePasswordInput } from "./types/UsernamePasswordInput";
 import {
   validateNewPassword,
   validateRegister,
-} from "../utils/validateRegister";
+} from "../utils/form-validation/validateRegister";
 import { getConnection } from "typeorm";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";

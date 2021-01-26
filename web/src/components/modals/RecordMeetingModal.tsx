@@ -11,6 +11,7 @@ import {
   Button,
   ModalFooter,
   Text,
+  Heading,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
@@ -44,9 +45,7 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
       <ModalContent>
         <ModalHeader>
           <Center>
-            <Text fontSize={30} fontWeight="bold">
-              RECORD MEETING
-            </Text>
+            <Heading>RECORD MEETING</Heading>
           </Center>
         </ModalHeader>
         <ModalCloseButton />
