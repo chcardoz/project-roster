@@ -8,7 +8,7 @@ import {
   Button,
   Spinner,
 } from "@chakra-ui/react";
-import { CreateStudentModal } from "../components/modals/CreateStudent";
+import CreateStudentModal from "../components/modals/CreateStudent";
 import { useMeQuery } from "../generated/graphql";
 import { PopulationTabs } from "../components/tables/PopulationTabs";
 
@@ -16,6 +16,7 @@ const Roster = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ data, fetching }] = useMeQuery();
 
+  const isCoordinator = data?.currentCoach.isCoordinator;
   let header = null;
   let tabs = null;
   if (fetching) {
@@ -24,19 +25,32 @@ const Roster = () => {
     header = <Heading> Please log in to see your student roster </Heading>;
     tabs = null;
   } else if (data?.currentCoach !== null) {
-    header = (
-      <>
-        <Heading>STUDENT ROSTER</Heading>
-        <Text mt={3}>
-          This is a place to locate all of your students and their details. You
-          cannot add or delete students but you can view their details.
-        </Text>
-        <Button mt={5} onClick={onOpen} rounded="full">
-          Create Student
-        </Button>
-        <CreateStudentModal isOpen={isOpen} onClose={onClose} />
-      </>
-    );
+    if (isCoordinator) {
+      header = (
+        <>
+          <Heading>STUDENT ROSTER</Heading>
+          <Text mt={3}>
+            Place to see all the assigned and unassigned students. You can
+            create new students with the button below and also click on actions
+            to assign or unassign students to your coaches
+          </Text>
+          <Button mt={5} onClick={onOpen} rounded="full">
+            Create Student
+          </Button>
+          <CreateStudentModal isOpen={isOpen} onClose={onClose} />
+        </>
+      );
+    } else {
+      header = (
+        <>
+          <Heading>STUDENT ROSTER</Heading>
+          <Text mt={3}>
+            This is a place to locate all of your students and their details.
+            You cannot add or delete students but you can view their details.
+          </Text>
+        </>
+      );
+    }
     tabs = <PopulationTabs />;
   }
 

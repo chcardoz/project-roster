@@ -7,19 +7,16 @@ import {
   Center,
   ModalCloseButton,
   ModalBody,
-  Box,
   Button,
   ModalFooter,
-  Text,
   Heading,
+  Box,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { useCreateStudentMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../input/InputField";
-import { SelectField } from "../input/SelectField";
 
 interface RecordMeetingModalProps {
   isOpen: boolean;
@@ -30,7 +27,6 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const router = useRouter();
   const toast = useToast();
   const [, createStudent] = useCreateStudentMutation();
   return (
@@ -79,7 +75,6 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
                   isClosable: true,
                 });
                 onClose();
-                router.push("/roster");
               }
             }}
           >
@@ -87,42 +82,31 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
               <Form>
                 <InputField
                   autoFocus
-                  name="firstName"
-                  placeholder="first name"
-                  label="First Name"
+                  name="studentID"
+                  placeholder="student id"
+                  label="Student ID"
                 />
                 <Box mt={4}>
                   <InputField
-                    name="lastName"
-                    placeholder="last name"
-                    label="Last Name"
+                    name="meetingDate"
+                    placeholder="meeting date"
+                    label="Meeting Date"
                   />
                 </Box>
                 <Box mt={4}>
                   <InputField
-                    name="email"
-                    placeholder="email"
-                    label="Email"
-                    type="email"
+                    name="duration"
+                    placeholder="30"
+                    label="Meeting Duration (in minutes)"
                   />
                 </Box>
-                <Box mt={4}>
-                  <SelectField label="Population" name="population">
-                    <option value="star">STAR</option>
-                    <option value="span">SPAN</option>
-                    <option value="athlete">Atlete</option>
-                    <option value="veteran">Veteran</option>
-                    <option value="voluntary">Voluntary</option>
-                  </SelectField>
-                </Box>
-
                 <Button
                   mt={4}
                   type="submit"
                   isLoading={isSubmitting}
                   colorScheme="red"
                 >
-                  create student
+                  record a meeting
                 </Button>
               </Form>
             )}

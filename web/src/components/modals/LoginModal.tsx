@@ -9,14 +9,12 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
 import { useLoginMutation } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
@@ -29,7 +27,6 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
-  const router = useRouter();
   const [, login] = useLoginMutation();
   return (
     <Modal
@@ -52,12 +49,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             initialValues={{ username: "", password: "" }}
             onSubmit={async (values, { setErrors }) => {
               const response = await login(values);
+              //The errors with the form fields
               if (response.data?.loginCoach.errors) {
                 setErrors(toErrorMap(response.data.loginCoach.errors));
+                //The mutation worked and we are logged in
               } else if (response.data?.loginCoach.coach) {
-                // Got to the home page
                 onClose();
-                router.push("/");
               }
             }}
           >

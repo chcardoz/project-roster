@@ -13,7 +13,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { useRouter } from "next/router";
 import React from "react";
 import { useCreateStudentMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
@@ -29,7 +28,6 @@ export const RecordOutreachModal: React.FC<RecordOutreachModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const router = useRouter();
   const toast = useToast();
   const [, createStudent] = useCreateStudentMutation();
   return (
@@ -80,7 +78,6 @@ export const RecordOutreachModal: React.FC<RecordOutreachModalProps> = ({
                   isClosable: true,
                 });
                 onClose();
-                router.push("/roster");
               }
             }}
           >

@@ -9,7 +9,6 @@ import {
   Button,
   Box,
   useToast,
-  Text,
   Center,
   Heading,
 } from "@chakra-ui/react";

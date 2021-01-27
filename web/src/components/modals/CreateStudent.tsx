@@ -6,16 +6,16 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text,
   useToast,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
-import { useRouter } from "next/router";
+import { withUrqlClient } from "next-urql";
 import React from "react";
 import { useCreateStudentMutation } from "../../generated/graphql";
+import { createUrqlClient } from "../../utils/createUrqlClient";
 import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../input/InputField";
 import { SelectField } from "../input/SelectField";
@@ -25,11 +25,10 @@ interface CreateStudentModalProps {
   onClose(): void;
 }
 
-export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
+const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const router = useRouter();
   const toast = useToast();
   const [, createStudent] = useCreateStudentMutation();
   return (
@@ -60,17 +59,20 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
             }}
             onSubmit={async (values, { setErrors }) => {
               const response = await createStudent({ options: values });
+              //Pre authentication on the server side before mutation is even attempted.
               if (response.error) {
                 toast({
                   title: "Not Authenticated",
                   description: "Only coordinators can create new students",
                   status: "error",
-                  duration: 5000,
+                  duration: 3000,
                   isClosable: true,
                 });
+                //These are the errors in the form fields
               } else if (response.data?.createStudent.errors) {
                 console.log(toErrorMap(response.data?.createStudent?.errors));
                 setErrors(toErrorMap(response.data?.createStudent?.errors));
+                //No errors and just  to make sure that the student we are getting is not a null object
               } else if (response.data?.createStudent?.student != null) {
                 toast({
                   title: "Student created.",
@@ -80,7 +82,6 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                   isClosable: true,
                 });
                 onClose();
-                router.push("/roster");
               }
             }}
           >
@@ -129,8 +130,9 @@ export const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
             )}
           </Formik>
         </ModalBody>
-        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );
 };
+
+export default withUrqlClient(createUrqlClient)(CreateStudentModal);
