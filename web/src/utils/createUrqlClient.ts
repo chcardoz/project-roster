@@ -9,7 +9,7 @@ import {
 } from "../generated/graphql";
 import { betterUpdateQuery } from "./betterUpdateQuery";
 
-const cursorPagination = (): Resolver => {
+const cursorPagination = (typename: string, query: string): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info; //entityKey(Query) fieldName(name of query)
     const allFields = cache.inspectFields(entityKey); //name of query and what arguments passed into it
@@ -22,14 +22,14 @@ const cursorPagination = (): Resolver => {
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
     const isItInTheCache = cache.resolve(
       cache.resolve(entityKey, fieldKey) as string,
-      "allStudents"
+      query
     );
     info.partial = !isItInTheCache;
     let hasMore = true;
     const results: string[] = [];
     fieldInfos.forEach((fi) => {
       const key = cache.resolve(entityKey, fi.fieldKey) as string;
-      const data = cache.resolve(key, "allStudents") as string[];
+      const data = cache.resolve(key, query) as string[];
       const _hasMore = cache.resolve(key, "hasMore");
       if (!_hasMore) {
         hasMore = _hasMore as boolean;
@@ -38,9 +38,9 @@ const cursorPagination = (): Resolver => {
     });
 
     return {
-      __typename: "PaginatedStudents",
+      __typename: typename,
       hasMore,
-      posts: results,
+      [query]: results,
     };
   };
 };
@@ -51,14 +51,16 @@ export const createUrqlClient = (ssrExchange: any) => ({
     credentials: "include" as const, //otherwise typescript will start crying
   },
   exchanges: [
-    dedupExchange,
+    dedupExchange, //this exchange is to make sure duplicates of query are not sent out
     cacheExchange({
       keys: {
         PaginatedStudents: () => null,
       },
       resolvers: {
         Query: {
-          allStudents: cursorPagination(),
+          allStudents: cursorPagination("PaginatedStudents", "allStudents"),
+          allMeetings: cursorPagination("PaginatedMeetings", "allMeetings"),
+          allOutreach: cursorPagination("PaginatedOutreach", "allOutreach"),
         },
       },
       updates: {

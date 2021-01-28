@@ -5,8 +5,11 @@ import {
   Arg,
   Ctx,
   Field,
+  Float,
+  Int,
   Mutation,
   ObjectType,
+  Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
@@ -31,17 +34,85 @@ class OutreachResponse {
   outreach?: Outreach;
 }
 
-// @ObjectType()
-// class PaginatedOutreach {
-//   @Field(() => [Outreach])
-//   allMeetings: Outreach[];
-//   @Field()
-//   hasMore: boolean;
-// }
+@ObjectType()
+class PaginatedOutreach {
+  @Field(() => [Outreach])
+  allOutreach: Outreach[];
+  @Field()
+  hasMore: boolean;
+}
 
 @Resolver(Outreach)
 export class OutreachResolver {
-  //TODO: Getting the meeting details for each coach and using pagination
+  @Query(() => PaginatedOutreach)
+  async allStudents(
+    @Arg("weekNo") week: number,
+    @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
+    @Ctx() { req }: MyContext
+  ): Promise<PaginatedOutreach> {
+    const realLimit = Math.min(20, limit);
+    const realLimitPlusOne = realLimit + 1;
+    const query = getConnection()
+      .getRepository(Outreach)
+      .createQueryBuilder("o");
+
+    //Checking to see if a coordinator is asking for the mweeting table, in which case show all meeting
+    if (req.session.isCoordinator) {
+      query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
+
+      if (cursor) {
+        query.andWhere('"createdAt" < :cursor', {
+          cursor: new Date(parseInt(cursor)),
+        });
+      }
+
+      const outreach = await query.getMany();
+      return {
+        allOutreach: outreach.slice(0, realLimit),
+        hasMore: outreach.length === realLimitPlusOne,
+      };
+    }
+
+    //Only care about pagination if a coach id is given
+    if (coachID) {
+      query
+        .where('"assignedCoachID" = :coachID', {
+          coachID: coachID,
+        })
+        .orderBy('"createdAt"', "DESC") //What you want to order the list by
+        .take(realLimitPlusOne);
+
+      const test = await query.getMany();
+
+      //Just means that the coach has some students
+      if (test.length !== 0) {
+        query.andWhere('"weekNumber" = :week', {
+          week,
+        });
+
+        if (cursor) {
+          query.andWhere('"createdAt" < :cursor', {
+            //Based on ordering, thats what you will paginate
+            cursor: new Date(parseInt(cursor)),
+          });
+        }
+      }
+
+      const outreach = await query.getMany();
+      return {
+        allOutreach: outreach.slice(0, realLimit),
+        hasMore: outreach.length === realLimitPlusOne,
+      };
+    }
+
+    //The same data shape if you entered a coach id who has no students.
+    return {
+      allOutreach: [],
+      hasMore: false,
+    };
+  }
 
   @Mutation(() => OutreachResponse)
   @UseMiddleware(isCoach)
