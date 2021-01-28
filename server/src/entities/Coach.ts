@@ -1,6 +1,7 @@
 import { Field, ObjectType } from "type-graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 import { Meeting } from "./Meeting";
+import { Outreach } from "./Outreach";
 import { Person } from "./Person";
 import { Student } from "./Student";
 
@@ -18,6 +19,10 @@ export class Coach extends Person {
   @Column({ default: false })
   isCoordinator!: boolean;
 
+  /*
+    RELATIONSHIPS
+  */
+
   @Field(() => [Student], { nullable: true })
   @OneToMany(() => Student, (student) => student.assignedCoach, {
     nullable: true,
@@ -26,4 +31,7 @@ export class Coach extends Person {
 
   @OneToMany(() => Meeting, (meeting) => meeting.coachID)
   meetings: Meeting[];
+
+  @OneToMany(() => Outreach, (outreach) => outreach.coachID)
+  outreach: Outreach[];
 }

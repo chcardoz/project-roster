@@ -4,6 +4,7 @@ import session from "express-session";
 import Redis from "ioredis";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { Meeting } from "./entities/Meeting";
 import typeormConfig from "./typeorm.config";
 import { applyMiddleware } from "./utils/applyMiddleware";
 
@@ -13,6 +14,7 @@ const main = async () => {
   await connection.runMigrations();
 
   // await Student.delete({});
+  // await Meeting.delete({});
 
   //Set up an express server
   const app = express();

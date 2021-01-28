@@ -16,14 +16,6 @@ export abstract class Person extends BaseEntity {
   id!: number;
 
   @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Field(() => String)
   @Column({ unique: true })
   email!: string;
 
@@ -34,4 +26,12 @@ export abstract class Person extends BaseEntity {
   @Field(() => String)
   @Column()
   lastName!: string;
+
+  @Field(() => String)
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

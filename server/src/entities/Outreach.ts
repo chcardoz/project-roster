@@ -19,12 +19,12 @@ export class Outreach extends BaseEntity {
   id!: number;
 
   @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column()
+  type: string;
 
-  @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Field(() => Int)
+  @Column()
+  weekNumber: number;
 
   @Field(() => Int)
   @Column()
@@ -45,6 +45,10 @@ export class Outreach extends BaseEntity {
   outreachDate: Date;
 
   @Field(() => String)
-  @Column()
-  type: string;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

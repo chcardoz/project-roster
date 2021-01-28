@@ -2,6 +2,7 @@ import { Student } from "../entities/Student";
 import { validateNewStudent } from "../utils/form-validation/validateNewStudent";
 import {
   Arg,
+  Ctx,
   Field,
   Float,
   Int,
@@ -14,6 +15,7 @@ import {
 import { getConnection } from "typeorm";
 import { StudentDetailsInput } from "./types/StudentDetailsInput";
 import { isCoordinator } from "../middleware/isCoordinator";
+import { MyContext } from "src/types";
 
 @ObjectType()
 class StudentFieldError {
@@ -48,13 +50,32 @@ export class StudentResolver {
     @Arg("population") population: string,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
+    @Ctx() { req }: MyContext
   ): Promise<PaginatedStudents> {
     const realLimit = Math.min(20, limit);
     const realLimitPlusOne = realLimit + 1;
     const query = getConnection()
       .getRepository(Student)
       .createQueryBuilder("s");
+
+    //Checking to see if a coordinator is asking for the student table, in which case show all students
+    if (req.session.isCoordinator) {
+      query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
+
+      if (cursor) {
+        query.andWhere('"createdAt" < :cursor', {
+          //Based on ordering, thats what you will paginate
+          cursor: new Date(parseInt(cursor)),
+        });
+      }
+
+      const students = await query.getMany();
+      return {
+        allStudents: students.slice(0, realLimit),
+        hasMore: students.length === realLimitPlusOne,
+      };
+    }
 
     //Only care about pagination if a coach id is given
     if (coachID) {
@@ -66,16 +87,19 @@ export class StudentResolver {
         .take(realLimitPlusOne);
 
       const test = await query.getMany();
-      //TODO: Do not allow pagination for coaches who have no students. It does some weird stuff if you allow that.
-      if (cursor && test.length !== 0) {
-        query
-          .where("population = :population", {
-            population,
-          })
-          .where('"createdAt" < :cursor', {
+
+      //Just means that the coach has some students
+      if (test.length !== 0) {
+        query.andWhere("population = :population", {
+          population,
+        });
+
+        if (cursor) {
+          query.andWhere('"createdAt" < :cursor', {
             //Based on ordering, thats what you will paginate
             cursor: new Date(parseInt(cursor)),
           });
+        }
       }
 
       const students = await query.getMany();

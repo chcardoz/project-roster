@@ -3,7 +3,11 @@ import {
   AlertIcon,
   Button,
   Flex,
-  Text,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Skeleton,
   Table,
   Tbody,
   Td,
@@ -13,14 +17,12 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
-import { CoachActions } from "../actions/CoachActions";
-import { CoordinatorActions } from "../actions/CoordinatorActions";
 
-interface StudentTableProps {
-  population: string;
+interface MeetingTableProps {
+  week: string;
 }
 
-export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
+export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
   const [variables, setVariables] = useState({
     limit: 5,
     cursor: null as null | string,
@@ -28,7 +30,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
-      population: population,
+      population: week,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
       ...variables, //your pagination parameters like limit and cursor
@@ -38,26 +40,39 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   //This is a way to account for all cases of data, null data and fetching data
   let tableBody = null;
   if (!fetching && !data) {
-    tableBody = (
-      <Alert status="error">
-        <AlertIcon />
-        Your query failed for some reason
-      </Alert>
-    );
+    <Tr>
+      <Td>
+        <Alert status="error">
+          <AlertIcon />
+          Your query failed for some reason
+        </Alert>
+      </Td>
+    </Tr>;
   } else if (!data && fetching) {
-    tableBody = <Text>Loading...</Text>;
-  } else if (coachData?.currentCoach) {
+    tableBody = (
+      <Tr>
+        <Td>
+          <Skeleton />
+        </Td>
+      </Tr>
+    );
+  } else {
     tableBody = data?.allStudents.allStudents.map((student) => (
       <Tr key={student.id}>
         <Td>{student.firstName}</Td>
         <Td>{student.lastName}</Td>
         <Td>{student.email}</Td>
         <Td>
-          {coachData?.currentCoach.isCoordinator ? (
-            <CoordinatorActions />
-          ) : (
-            <CoachActions />
-          )}
+          <Menu>
+            <MenuButton as={Button}>Actions</MenuButton>
+            <MenuList>
+              <MenuItem>Request to be removed</MenuItem>
+              <MenuItem>Edit Details</MenuItem>
+              <MenuItem>Remove</MenuItem>
+              <MenuItem>Add outreach</MenuItem>
+              <MenuItem>Add a meeting</MenuItem>
+            </MenuList>
+          </Menu>
         </Td>
       </Tr>
     ));
