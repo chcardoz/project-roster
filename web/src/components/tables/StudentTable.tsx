@@ -28,7 +28,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
-      population: population,
+      population,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
       ...variables, //your pagination parameters like limit and cursor
@@ -46,7 +46,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
     );
   } else if (!data && fetching) {
     tableBody = <Text>Loading...</Text>;
-  } else if (coachData?.currentCoach) {
+  } else if (coachData?.currentCoach !== null) {
     tableBody = data?.allStudents.allStudents.map((student) => (
       <Tr key={student.id}>
         <Td>{student.firstName}</Td>

@@ -45,7 +45,7 @@ class PaginatedOutreach {
 @Resolver(Outreach)
 export class OutreachResolver {
   @Query(() => PaginatedOutreach)
-  async allStudents(
+  async allOutreach(
     @Arg("weekNo") week: number,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,

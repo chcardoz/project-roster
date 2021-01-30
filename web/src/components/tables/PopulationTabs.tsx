@@ -6,7 +6,7 @@ interface PopulationTabsProps {}
 
 export const PopulationTabs: React.FC<PopulationTabsProps> = ({}) => {
   return (
-    <Tabs>
+    <Tabs isLazy>
       <TabList>
         <Tab>STAR</Tab>
         <Tab>SPAN</Tab>

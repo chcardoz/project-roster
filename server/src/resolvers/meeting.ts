@@ -45,7 +45,7 @@ class PaginatedMeetings {
 @Resolver(Meeting)
 export class MeetingResolver {
   @Query(() => PaginatedMeetings)
-  async allStudents(
+  async allMeetings(
     @Arg("weekNo") week: number,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,

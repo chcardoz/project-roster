@@ -16,7 +16,6 @@ const Roster = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ data, fetching }] = useMeQuery();
 
-  const isCoordinator = data?.currentCoach.isCoordinator;
   let header = null;
   let tabs = null;
   if (fetching) {
@@ -25,7 +24,7 @@ const Roster = () => {
     header = <Heading> Please log in to see your student roster </Heading>;
     tabs = null;
   } else if (data?.currentCoach !== null) {
-    if (isCoordinator) {
+    if (data?.currentCoach.isCoordinator) {
       header = (
         <>
           <Heading>STUDENT ROSTER</Heading>

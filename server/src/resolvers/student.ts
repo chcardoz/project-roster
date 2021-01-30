@@ -43,7 +43,7 @@ class StudentResponse {
   student?: Student;
 }
 
-@Resolver()
+@Resolver(Student)
 export class StudentResolver {
   @Query(() => PaginatedStudents)
   async allStudents(

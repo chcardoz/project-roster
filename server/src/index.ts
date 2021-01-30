@@ -4,7 +4,6 @@ import session from "express-session";
 import Redis from "ioredis";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { Meeting } from "./entities/Meeting";
 import typeormConfig from "./typeorm.config";
 import { applyMiddleware } from "./utils/applyMiddleware";
 

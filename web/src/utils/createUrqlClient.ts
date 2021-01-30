@@ -1,4 +1,5 @@
 import { cacheExchange, Resolver } from "@urql/exchange-graphcache";
+import _ from "lodash";
 import { dedupExchange, fetchExchange, stringifyVariables } from "urql";
 import {
   LogoutMutation,
@@ -13,7 +14,9 @@ const cursorPagination = (typename: string, query: string): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info; //entityKey(Query) fieldName(name of query)
     const allFields = cache.inspectFields(entityKey); //name of query and what arguments passed into it
-    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName); //only getting the query we want from the cache
+    const fieldInfos = allFields
+      .filter((info) => info.fieldName === fieldName)
+      .filter((info) => _.isEqual(info.arguments, fieldArgs)); //only getting the query we want from the cache
     const size = fieldInfos.length;
     if (size === 0) {
       return undefined; //the query we were looking for is not in the cache
@@ -55,6 +58,8 @@ export const createUrqlClient = (ssrExchange: any) => ({
     cacheExchange({
       keys: {
         PaginatedStudents: () => null,
+        PaginatedMeetings: () => null,
+        PaginatedOutreach: () => null,
       },
       resolvers: {
         Query: {
