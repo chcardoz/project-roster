@@ -47,8 +47,4 @@ export class Meeting extends BaseEntity {
   @Field(() => Int)
   @Column()
   duration: number;
-
-  @Field(() => Int)
-  @Column()
-  weekNumber: number;
 }

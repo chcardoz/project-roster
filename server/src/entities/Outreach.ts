@@ -24,10 +24,6 @@ export class Outreach extends BaseEntity {
 
   @Field(() => Int)
   @Column()
-  weekNumber: number;
-
-  @Field(() => Int)
-  @Column()
   coachID: number;
 
   @ManyToOne(() => Coach, (coach) => coach.meetings)

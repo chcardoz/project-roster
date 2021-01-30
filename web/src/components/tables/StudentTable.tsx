@@ -28,6 +28,10 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
+      isCoordinator:
+        coachData?.currentCoach === null
+          ? null
+          : coachData?.currentCoach.isCoordinator,
       population,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,

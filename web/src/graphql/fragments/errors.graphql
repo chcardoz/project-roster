@@ -7,3 +7,13 @@ fragment StudentError on StudentFieldError {
   field
   message
 }
+
+fragment MeetingError on MeetingFieldError {
+  field
+  message
+}
+
+fragment OutreachError on OutreachFieldError {
+  field
+  message
+}

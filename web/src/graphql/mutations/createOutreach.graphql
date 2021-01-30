@@ -1,0 +1,5 @@
+mutation CreateOutreach($options: OutreachInput!) {
+  createOutreach(options: $options) {
+    ...BasicOutreachResponse
+  }
+}

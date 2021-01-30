@@ -1,8 +1,0 @@
-fragment BasicStudentResponse on StudentResponse {
-  errors {
-    ...StudentError
-  }
-  student {
-    ...BasicStudent
-  }
-}

@@ -1,6 +1,17 @@
-import { FieldError, StudentFieldError } from "../generated/graphql";
+import {
+  FieldError,
+  MeetingFieldError,
+  OutreachFieldError,
+  StudentFieldError,
+} from "../generated/graphql";
 
-export const toErrorMap = (errors: FieldError[] | StudentFieldError[]) => {
+type CombinedFieldError =
+  | FieldError[]
+  | StudentFieldError[]
+  | MeetingFieldError[]
+  | OutreachFieldError[];
+
+export const toErrorMap = (errors: CombinedFieldError) => {
   const errorMap: Record<string, string> = {};
   errors.forEach(({ field, message }) => {
     errorMap[field] = message;

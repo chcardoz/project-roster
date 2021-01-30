@@ -3,12 +3,14 @@ query AllStudents(
   $limit: Int!
   $cursor: String
   $population: String!
+  $isCoordinator: Boolean!
 ) {
   allStudents(
     population: $population
     coachID: $coachID
     limit: $limit
     cursor: $cursor
+    isCoordinator: $isCoordinator
   ) {
     hasMore
     allStudents {

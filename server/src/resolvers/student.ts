@@ -49,9 +49,10 @@ export class StudentResolver {
   async allStudents(
     @Arg("population") population: string,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
+    @Arg("isCoordinator", () => Boolean, { nullable: true })
+    isCoordinator: boolean | null,
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
-    @Ctx() { req }: MyContext
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
   ): Promise<PaginatedStudents> {
     const realLimit = Math.min(20, limit);
     const realLimitPlusOne = realLimit + 1;
@@ -60,8 +61,13 @@ export class StudentResolver {
       .createQueryBuilder("s");
 
     //Checking to see if a coordinator is asking for the student table, in which case show all students
-    if (req.session.isCoordinator) {
-      query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
+    if (isCoordinator) {
+      query
+        .where("population = :population", {
+          population,
+        })
+        .orderBy('"createdAt"', "DESC")
+        .take(realLimitPlusOne);
 
       if (cursor) {
         query.andWhere('"createdAt" < :cursor', {

@@ -1,8 +1,0 @@
-fragment BasicCoachResponse on CoachResponse {
-  errors {
-    ...CoachError
-  }
-  coach {
-    ...BasicUser
-  }
-}

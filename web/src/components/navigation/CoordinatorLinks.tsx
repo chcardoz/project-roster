@@ -28,7 +28,7 @@ export const CoordinatorLinks: React.FC<CoordinatorLinksProps> = ({
         position="relative"
         opacity={router.pathname !== "/roster" ? 0.4 : 1}
       >
-        <Link href="/student">
+        <Link href="/roster">
           <a>Students</a>
         </Link>
       </Box>
@@ -40,9 +40,20 @@ export const CoordinatorLinks: React.FC<CoordinatorLinksProps> = ({
           <a>Meetings</a>
         </Link>
       </Box>
-      <Box position="relative" opacity={router.pathname !== "/list" ? 0.4 : 1}>
+      <Box
+        position="relative"
+        opacity={router.pathname !== "/coaches" ? 0.4 : 1}
+      >
         <Link href="/coaches">
           <a>Coaches</a>
+        </Link>
+      </Box>
+      <Box
+        position="relative"
+        opacity={router.pathname !== "/outreach" ? 0.4 : 1}
+      >
+        <Link href="/outreach">
+          <a>Outreach</a>
         </Link>
       </Box>
     </Stack>

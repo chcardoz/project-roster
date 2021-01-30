@@ -19,24 +19,43 @@ export type Query = {
   allCoaches: Array<Coach>;
   currentCoach?: Maybe<Coach>;
   allStudents: PaginatedStudents;
+  allMeetings: PaginatedMeetings;
+  allOutreach: PaginatedOutreach;
 };
 
 
 export type QueryAllStudentsArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
+  isCoordinator?: Maybe<Scalars['Boolean']>;
   coachID?: Maybe<Scalars['Float']>;
   population: Scalars['String'];
+};
+
+
+export type QueryAllMeetingsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  coachID?: Maybe<Scalars['Float']>;
+  weekNo: Scalars['Float'];
+};
+
+
+export type QueryAllOutreachArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  coachID?: Maybe<Scalars['Float']>;
+  weekNo: Scalars['Float'];
 };
 
 export type Coach = {
   __typename?: 'Coach';
   id: Scalars['Int'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
   username: Scalars['String'];
   isCoordinator: Scalars['Boolean'];
   students?: Maybe<Array<Student>>;
@@ -45,17 +64,15 @@ export type Coach = {
 export type Student = {
   __typename?: 'Student';
   id: Scalars['Int'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
   population: Scalars['String'];
   isActive: Scalars['Boolean'];
   meetingFrequency?: Maybe<Scalars['String']>;
   modeOfMeeting?: Maybe<Scalars['String']>;
-  dateLastMet?: Maybe<Scalars['String']>;
-  dateLastOutreach?: Maybe<Scalars['String']>;
   assignedCoachID?: Maybe<Scalars['Int']>;
 };
 
@@ -63,6 +80,40 @@ export type PaginatedStudents = {
   __typename?: 'PaginatedStudents';
   allStudents: Array<Student>;
   hasMore: Scalars['Boolean'];
+};
+
+export type PaginatedMeetings = {
+  __typename?: 'PaginatedMeetings';
+  allMeetings: Array<Meeting>;
+  hasMore: Scalars['Boolean'];
+};
+
+export type Meeting = {
+  __typename?: 'Meeting';
+  id: Scalars['Int'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+  coachID: Scalars['Int'];
+  studentID: Scalars['Int'];
+  meetingDate: Scalars['String'];
+  duration: Scalars['Int'];
+};
+
+export type PaginatedOutreach = {
+  __typename?: 'PaginatedOutreach';
+  allOutreach: Array<Outreach>;
+  hasMore: Scalars['Boolean'];
+};
+
+export type Outreach = {
+  __typename?: 'Outreach';
+  id: Scalars['Int'];
+  type: Scalars['String'];
+  coachID: Scalars['Int'];
+  studentID: Scalars['Int'];
+  outreachDate: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type Mutation = {
@@ -74,6 +125,10 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   createStudent: StudentResponse;
   deleteStudent: Scalars['Boolean'];
+  createMeeting: MeetingResponse;
+  deleteMeeting: Scalars['Boolean'];
+  createOutreach: OutreachResponse;
+  deleteOutreach: Scalars['Boolean'];
 };
 
 
@@ -108,6 +163,26 @@ export type MutationDeleteStudentArgs = {
   id: Scalars['Float'];
 };
 
+
+export type MutationCreateMeetingArgs = {
+  options: MeetingInput;
+};
+
+
+export type MutationDeleteMeetingArgs = {
+  id: Scalars['Float'];
+};
+
+
+export type MutationCreateOutreachArgs = {
+  options: OutreachInput;
+};
+
+
+export type MutationDeleteOutreachArgs = {
+  id: Scalars['Float'];
+};
+
 export type CoachResponse = {
   __typename?: 'CoachResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -122,10 +197,10 @@ export type FieldError = {
 
 export type UsernamePasswordInput = {
   email: Scalars['String'];
-  username: Scalars['String'];
-  password: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
+  username: Scalars['String'];
+  password: Scalars['String'];
 };
 
 export type StudentResponse = {
@@ -147,14 +222,102 @@ export type StudentDetailsInput = {
   population: Scalars['String'];
 };
 
-export type BasicStudentFragment = (
-  { __typename?: 'Student' }
-  & Pick<Student, 'id' | 'email' | 'firstName' | 'lastName' | 'population' | 'isActive' | 'meetingFrequency' | 'modeOfMeeting' | 'dateLastMet' | 'dateLastOutreach' | 'assignedCoachID'>
+export type MeetingResponse = {
+  __typename?: 'MeetingResponse';
+  errors?: Maybe<Array<MeetingFieldError>>;
+  meeting?: Maybe<Meeting>;
+};
+
+export type MeetingFieldError = {
+  __typename?: 'MeetingFieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
+};
+
+export type MeetingInput = {
+  studentID: Scalars['Float'];
+  meetingDate: Scalars['String'];
+  duration: Scalars['Float'];
+};
+
+export type OutreachResponse = {
+  __typename?: 'OutreachResponse';
+  errors?: Maybe<Array<OutreachFieldError>>;
+  outreach?: Maybe<Outreach>;
+};
+
+export type OutreachFieldError = {
+  __typename?: 'OutreachFieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
+};
+
+export type OutreachInput = {
+  studentID: Scalars['Float'];
+  outreachDate: Scalars['String'];
+  type: Scalars['String'];
+};
+
+export type CoachErrorFragment = (
+  { __typename?: 'FieldError' }
+  & Pick<FieldError, 'field' | 'message'>
+);
+
+export type StudentErrorFragment = (
+  { __typename?: 'StudentFieldError' }
+  & Pick<StudentFieldError, 'field' | 'message'>
+);
+
+export type MeetingErrorFragment = (
+  { __typename?: 'MeetingFieldError' }
+  & Pick<MeetingFieldError, 'field' | 'message'>
+);
+
+export type OutreachErrorFragment = (
+  { __typename?: 'OutreachFieldError' }
+  & Pick<OutreachFieldError, 'field' | 'message'>
 );
 
 export type BasicUserFragment = (
   { __typename?: 'Coach' }
   & Pick<Coach, 'id' | 'firstName' | 'lastName' | 'username' | 'email' | 'isCoordinator'>
+);
+
+export type BasicStudentFragment = (
+  { __typename?: 'Student' }
+  & Pick<Student, 'email' | 'firstName' | 'lastName' | 'population' | 'isActive' | 'meetingFrequency' | 'modeOfMeeting' | 'assignedCoachID'>
+);
+
+export type BasicMeetingFragment = (
+  { __typename?: 'Meeting' }
+  & Pick<Meeting, 'coachID' | 'studentID' | 'meetingDate' | 'duration'>
+);
+
+export type BasicOutreachFragment = (
+  { __typename?: 'Outreach' }
+  & Pick<Outreach, 'coachID' | 'studentID' | 'outreachDate' | 'type'>
+);
+
+export type BasicOutreachResponseFragment = (
+  { __typename?: 'OutreachResponse' }
+  & { errors?: Maybe<Array<(
+    { __typename?: 'OutreachFieldError' }
+    & OutreachErrorFragment
+  )>>, outreach?: Maybe<(
+    { __typename?: 'Outreach' }
+    & BasicOutreachFragment
+  )> }
+);
+
+export type BasicMeetingResponseFragment = (
+  { __typename?: 'MeetingResponse' }
+  & { errors?: Maybe<Array<(
+    { __typename?: 'MeetingFieldError' }
+    & MeetingErrorFragment
+  )>>, meeting?: Maybe<(
+    { __typename?: 'Meeting' }
+    & BasicMeetingFragment
+  )> }
 );
 
 export type BasicCoachResponseFragment = (
@@ -166,16 +329,6 @@ export type BasicCoachResponseFragment = (
     { __typename?: 'Coach' }
     & BasicUserFragment
   )> }
-);
-
-export type CoachErrorFragment = (
-  { __typename?: 'FieldError' }
-  & Pick<FieldError, 'field' | 'message'>
-);
-
-export type StudentErrorFragment = (
-  { __typename?: 'StudentFieldError' }
-  & Pick<StudentFieldError, 'field' | 'message'>
 );
 
 export type BasicStudentResponseFragment = (
@@ -200,6 +353,32 @@ export type ChangePasswordMutation = (
   & { changePassword: (
     { __typename?: 'CoachResponse' }
     & BasicCoachResponseFragment
+  ) }
+);
+
+export type CreateMeetingMutationVariables = Exact<{
+  options: MeetingInput;
+}>;
+
+
+export type CreateMeetingMutation = (
+  { __typename?: 'Mutation' }
+  & { createMeeting: (
+    { __typename?: 'MeetingResponse' }
+    & BasicMeetingResponseFragment
+  ) }
+);
+
+export type CreateOutreachMutationVariables = Exact<{
+  options: OutreachInput;
+}>;
+
+
+export type CreateOutreachMutation = (
+  { __typename?: 'Mutation' }
+  & { createOutreach: (
+    { __typename?: 'OutreachResponse' }
+    & BasicOutreachResponseFragment
   ) }
 );
 
@@ -276,6 +455,7 @@ export type AllStudentsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
   population: Scalars['String'];
+  isCoordinator: Scalars['Boolean'];
 }>;
 
 
@@ -302,6 +482,56 @@ export type MeQuery = (
   )> }
 );
 
+export const OutreachErrorFragmentDoc = gql`
+    fragment OutreachError on OutreachFieldError {
+  field
+  message
+}
+    `;
+export const BasicOutreachFragmentDoc = gql`
+    fragment BasicOutreach on Outreach {
+  coachID
+  studentID
+  outreachDate
+  type
+}
+    `;
+export const BasicOutreachResponseFragmentDoc = gql`
+    fragment BasicOutreachResponse on OutreachResponse {
+  errors {
+    ...OutreachError
+  }
+  outreach {
+    ...BasicOutreach
+  }
+}
+    ${OutreachErrorFragmentDoc}
+${BasicOutreachFragmentDoc}`;
+export const MeetingErrorFragmentDoc = gql`
+    fragment MeetingError on MeetingFieldError {
+  field
+  message
+}
+    `;
+export const BasicMeetingFragmentDoc = gql`
+    fragment BasicMeeting on Meeting {
+  coachID
+  studentID
+  meetingDate
+  duration
+}
+    `;
+export const BasicMeetingResponseFragmentDoc = gql`
+    fragment BasicMeetingResponse on MeetingResponse {
+  errors {
+    ...MeetingError
+  }
+  meeting {
+    ...BasicMeeting
+  }
+}
+    ${MeetingErrorFragmentDoc}
+${BasicMeetingFragmentDoc}`;
 export const CoachErrorFragmentDoc = gql`
     fragment CoachError on FieldError {
   field
@@ -337,7 +567,6 @@ export const StudentErrorFragmentDoc = gql`
     `;
 export const BasicStudentFragmentDoc = gql`
     fragment BasicStudent on Student {
-  id
   email
   firstName
   lastName
@@ -345,8 +574,6 @@ export const BasicStudentFragmentDoc = gql`
   isActive
   meetingFrequency
   modeOfMeeting
-  dateLastMet
-  dateLastOutreach
   assignedCoachID
 }
     `;
@@ -371,6 +598,28 @@ export const ChangePasswordDocument = gql`
 
 export function useChangePasswordMutation() {
   return Urql.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument);
+};
+export const CreateMeetingDocument = gql`
+    mutation CreateMeeting($options: MeetingInput!) {
+  createMeeting(options: $options) {
+    ...BasicMeetingResponse
+  }
+}
+    ${BasicMeetingResponseFragmentDoc}`;
+
+export function useCreateMeetingMutation() {
+  return Urql.useMutation<CreateMeetingMutation, CreateMeetingMutationVariables>(CreateMeetingDocument);
+};
+export const CreateOutreachDocument = gql`
+    mutation CreateOutreach($options: OutreachInput!) {
+  createOutreach(options: $options) {
+    ...BasicOutreachResponse
+  }
+}
+    ${BasicOutreachResponseFragmentDoc}`;
+
+export function useCreateOutreachMutation() {
+  return Urql.useMutation<CreateOutreachMutation, CreateOutreachMutationVariables>(CreateOutreachDocument);
 };
 export const CreateStudentDocument = gql`
     mutation CreateStudent($options: StudentDetailsInput!) {
@@ -433,12 +682,13 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const AllStudentsDocument = gql`
-    query AllStudents($coachID: Float!, $limit: Int!, $cursor: String, $population: String!) {
+    query AllStudents($coachID: Float!, $limit: Int!, $cursor: String, $population: String!, $isCoordinator: Boolean!) {
   allStudents(
     population: $population
     coachID: $coachID
     limit: $limit
     cursor: $cursor
+    isCoordinator: $isCoordinator
   ) {
     hasMore
     allStudents {

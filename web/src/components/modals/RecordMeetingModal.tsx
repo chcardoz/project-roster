@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import React, { useState } from "react";
-import { useCreateStudentMutation } from "../../generated/graphql";
+import { useCreateMeetingMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../input/InputField";
 
@@ -28,7 +28,7 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
   onClose,
 }) => {
   const toast = useToast();
-  const [, createStudent] = useCreateStudentMutation();
+  const [, recordMeeting] = useCreateMeetingMutation();
   return (
     <Modal
       onClose={onClose}
@@ -48,28 +48,33 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
         <ModalBody>
           <Formik
             initialValues={{
-              email: "",
-              firstName: "",
-              lastName: "",
-              population: "",
+              studentID: null,
+              meetingDate: "",
+              duration: "",
             }}
             onSubmit={async (values, { setErrors }) => {
-              const response = await createStudent({ options: values });
+              const response = await recordMeeting({
+                options: {
+                  duration: parseInt(values.duration),
+                  studentID: parseInt(values.studentID),
+                  meetingDate: values.meetingDate,
+                },
+              });
               if (response.error) {
                 toast({
                   title: "Not Authenticated",
-                  description: "Only coordinators can create new students",
+                  description: "Only coaches can record meetings",
                   status: "error",
                   duration: 5000,
                   isClosable: true,
                 });
-              } else if (response.data?.createStudent.errors) {
-                console.log(toErrorMap(response.data?.createStudent?.errors));
-                setErrors(toErrorMap(response.data?.createStudent?.errors));
-              } else if (response.data?.createStudent?.student != null) {
+              } else if (response.data?.createMeeting.errors) {
+                console.log(toErrorMap(response.data?.createMeeting.errors));
+                setErrors(toErrorMap(response.data?.createMeeting.errors));
+              } else if (response.data?.createMeeting?.meeting != null) {
                 toast({
-                  title: "Student created.",
-                  description: "A new student has been successfully created.",
+                  title: "Meeting recorded.",
+                  description: "A new meeting has been successfully recorded.",
                   status: "success",
                   duration: 5000,
                   isClosable: true,

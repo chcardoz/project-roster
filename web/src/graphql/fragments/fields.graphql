@@ -1,0 +1,33 @@
+fragment BasicUser on Coach {
+  id
+  firstName
+  lastName
+  username
+  email
+  isCoordinator
+}
+
+fragment BasicStudent on Student {
+  email
+  firstName
+  lastName
+  population
+  isActive
+  meetingFrequency
+  modeOfMeeting
+  assignedCoachID
+}
+
+fragment BasicMeeting on Meeting {
+  coachID
+  studentID
+  meetingDate
+  duration
+}
+
+fragment BasicOutreach on Outreach {
+  coachID
+  studentID
+  outreachDate
+  type
+}

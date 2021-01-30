@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
@@ -93,6 +94,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             )}
           </Formik>
         </ModalBody>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );

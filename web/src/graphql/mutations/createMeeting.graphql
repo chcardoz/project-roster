@@ -1,0 +1,5 @@
+mutation CreateMeeting($options: MeetingInput!) {
+  createMeeting(options: $options) {
+    ...BasicMeetingResponse
+  }
+}
