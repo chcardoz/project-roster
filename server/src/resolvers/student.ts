@@ -1,8 +1,5 @@
-import { Student } from "../entities/Student";
-import { validateNewStudent } from "../utils/form-validation/validateNewStudent";
 import {
   Arg,
-  Ctx,
   Field,
   Float,
   Int,
@@ -13,9 +10,10 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { StudentDetailsInput } from "./types/StudentDetailsInput";
+import { Student } from "../entities/Student";
 import { isCoordinator } from "../middleware/isCoordinator";
-import { MyContext } from "src/types";
+import { validateNewStudent } from "../utils/form-validation/validateNewStudent";
+import { StudentDetailsInput } from "./types/StudentDetailsInput";
 
 @ObjectType()
 class StudentFieldError {

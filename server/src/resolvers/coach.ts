@@ -227,6 +227,7 @@ export class CoachResolver {
     }
 
     req.session.userId = coach.id;
+    req.session.isCoordinator = coach.isCoordinator;
     return {
       coach,
     };

@@ -16,6 +16,7 @@ import { Formik, Form } from "formik";
 import React, { useState } from "react";
 import { useCreateMeetingMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
+import { DateField } from "../input/DateField";
 import { InputField } from "../input/InputField";
 
 interface RecordMeetingModalProps {
@@ -92,11 +93,12 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
                   label="Student ID"
                 />
                 <Box mt={4}>
-                  <InputField
+                  {/* <InputField
                     name="meetingDate"
                     placeholder="meeting date"
                     label="Meeting Date"
-                  />
+                  /> */}
+                  <DateField name="meetingDate" label="Meeting Date" />
                 </Box>
                 <Box mt={4}>
                   <InputField
