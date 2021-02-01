@@ -5,6 +5,7 @@ import { Navbar } from "../components/navigation/Navbar";
 import theme from "../theme/index";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import Fonts from "../theme/Fonts";
+import "./date-picker.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

@@ -1,8 +1,12 @@
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  FormErrorMessage,
+} from "@chakra-ui/react";
+import { useField, useFormikContext } from "formik";
 import React from "react";
-import { DatePicker, DatePickerInput } from "carbon-components-react";
-import "carbon-components/css/carbon-components.min.css";
-import { FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react";
-import { useField } from "formik";
+import DatePicker from "./DatePicker";
 
 interface DateFieldProps {
   label: string;
@@ -10,13 +14,20 @@ interface DateFieldProps {
 }
 
 export const DateField: React.FC<DateFieldProps> = ({ label, ...props }) => {
+  const { setFieldValue } = useFormikContext();
   const [field, { error }] = useField(props);
   return (
     <FormControl isInvalid={!!error}>
       <FormLabel htmlFor={field.name}>{label}</FormLabel>
-      <DatePicker id={field.name} datePickerType="single">
-        <DatePickerInput placeholder="mm/dd/yyyy" id="date-picker-single" />
-      </DatePicker>
+      <DatePicker
+        {...field}
+        {...props}
+        selectedDate={(field.value && new Date(field.value)) || null}
+        onChange={(val) => {
+          setFieldValue(field.name, val);
+        }}
+        showPopperArrow
+      />
       {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
     </FormControl>
   );
