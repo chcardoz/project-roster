@@ -35,7 +35,7 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
   return (
     <Modal
       onClose={onClose}
-      size="sm"
+      size="md"
       isOpen={isOpen}
       isCentered
       motionPreset="slideInBottom"
@@ -51,40 +51,40 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
         <ModalBody>
           <Formik
             initialValues={{
-              studentID: 0,
+              studentID: "",
               meetingDate: "",
               duration: "",
             }}
             onSubmit={async (values, { setErrors }) => {
               console.log(values);
-              // const response = await recordMeeting({
-              //   options: {
-              //     duration: parseInt(values.duration),
-              //     studentID: parseInt(values.studentID),
-              //     meetingDate: values.meetingDate,
-              //   },
-              // });
-              // if (response.error) {
-              //   toast({
-              //     title: "Not Authenticated",
-              //     description: "Only coaches can record meetings",
-              //     status: "error",
-              //     duration: 5000,
-              //     isClosable: true,
-              //   });
-              // } else if (response.data?.createMeeting.errors) {
-              //   console.log(toErrorMap(response.data?.createMeeting.errors));
-              //   setErrors(toErrorMap(response.data?.createMeeting.errors));
-              // } else if (response.data?.createMeeting?.meeting != null) {
-              //   toast({
-              //     title: "Meeting recorded.",
-              //     description: "A new meeting has been successfully recorded.",
-              //     status: "success",
-              //     duration: 5000,
-              //     isClosable: true,
-              //   });
-              //   onClose();
-              // }
+              const response = await recordMeeting({
+                options: {
+                  duration: parseInt(values.duration),
+                  studentID: parseInt(values.studentID),
+                  meetingDate: values.meetingDate,
+                },
+              });
+              if (response.error) {
+                toast({
+                  title: "Not Authenticated",
+                  description: "Only coaches can record meetings",
+                  status: "error",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              } else if (response.data?.createMeeting.errors) {
+                console.log(toErrorMap(response.data?.createMeeting.errors));
+                setErrors(toErrorMap(response.data?.createMeeting.errors));
+              } else if (response.data?.createMeeting?.meeting != null) {
+                toast({
+                  title: "Meeting recorded.",
+                  description: "A new meeting has been successfully recorded.",
+                  status: "success",
+                  duration: 5000,
+                  isClosable: true,
+                });
+                onClose();
+              }
             }}
           >
             {({ isSubmitting }) => (
@@ -96,11 +96,6 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
                   label="Student ID"
                 />
                 <Box mt={4}>
-                  {/* <InputField
-                    name="meetingDate"
-                    placeholder="meeting date"
-                    label="Meeting Date"
-                  /> */}
                   <DateField label="Meeting Date" name="meetingDate" />
                 </Box>
                 <Box mt={4}>

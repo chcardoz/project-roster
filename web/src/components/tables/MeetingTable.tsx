@@ -30,6 +30,10 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
+      isCoordinator:
+        coachData?.currentCoach === null
+          ? null
+          : coachData?.currentCoach.isCoordinator,
       population: week,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,

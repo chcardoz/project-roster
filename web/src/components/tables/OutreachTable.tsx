@@ -32,6 +32,10 @@ export const OutreachTable: React.FC<OutreachTableProps> = ({
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
+      isCoordinator:
+        coachData?.currentCoach === null
+          ? null
+          : coachData?.currentCoach.isCoordinator,
       population: population,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,

@@ -13,8 +13,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
-import { CoachActions } from "../actions/CoachActions";
-import { CoordinatorActions } from "../actions/CoordinatorActions";
+import { CoachActions } from "../actions/roster/CoachActions";
+import { CoordinatorActions } from "../actions/roster/CoordinatorActions";
 
 interface StudentTableProps {
   population: string;

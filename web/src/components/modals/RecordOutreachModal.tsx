@@ -11,11 +11,13 @@ import {
   Button,
   ModalFooter,
   Text,
+  Heading,
 } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import React from "react";
 import { useCreateOutreachMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
+import { DateField } from "../input/DateField";
 import { InputField } from "../input/InputField";
 import { SelectField } from "../input/SelectField";
 
@@ -33,7 +35,7 @@ export const RecordOutreachModal: React.FC<RecordOutreachModalProps> = ({
   return (
     <Modal
       onClose={onClose}
-      size="sm"
+      size="md"
       isOpen={isOpen}
       isCentered
       motionPreset="slideInBottom"
@@ -42,16 +44,14 @@ export const RecordOutreachModal: React.FC<RecordOutreachModalProps> = ({
       <ModalContent>
         <ModalHeader>
           <Center>
-            <Text fontSize={30} fontWeight="bold">
-              RECORD OUTREACH
-            </Text>
+            <Heading>RECORD OUTREACH</Heading>
           </Center>
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Formik
             initialValues={{
-              studentID: null,
+              studentID: "",
               outreachDate: "",
               type: "",
             }}
@@ -95,13 +95,7 @@ export const RecordOutreachModal: React.FC<RecordOutreachModalProps> = ({
                   label="Student ID"
                 />
                 <Box mt={4}>
-                  //TODO: Insert datepicker component somehow and put in form
-                  control
-                  <InputField
-                    name="outreachDate"
-                    placeholder="outreach date"
-                    label="Outreach Date"
-                  />
+                  <DateField label="Meeting Date" name="meetingDate" />
                 </Box>
                 <Box mt={4}>
                   <SelectField label="Outreach type" name="type">

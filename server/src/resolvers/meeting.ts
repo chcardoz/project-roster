@@ -46,7 +46,6 @@ class PaginatedMeetings {
 export class MeetingResolver {
   @Query(() => PaginatedMeetings)
   async allMeetings(
-    @Arg("weekNo") week: number,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
@@ -88,9 +87,9 @@ export class MeetingResolver {
 
       //Just means that the coach has some students
       if (test.length !== 0) {
-        query.andWhere('"weekNumber" = :week', {
-          week,
-        });
+        // query.andWhere('"weekNumber" = :week', {
+        //   week,
+        // });
 
         if (cursor) {
           query.andWhere('"createdAt" < :cursor', {
@@ -133,7 +132,7 @@ export class MeetingResolver {
         .values({
           studentID: options.studentID,
           coachID: req.session.userId,
-          meetingDate: new Date(parseInt(options.meetingDate)), //TODO: directly sending a date object to the date .maybe?
+          meetingDate: new Date(options.meetingDate),
           duration: options.duration,
         })
         .returning("*")
