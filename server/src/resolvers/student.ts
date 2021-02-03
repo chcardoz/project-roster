@@ -1,8 +1,6 @@
 import {
   Arg,
   Field,
-  Float,
-  Int,
   Mutation,
   ObjectType,
   Query,
@@ -13,6 +11,7 @@ import { getConnection } from "typeorm";
 import { Student } from "../entities/Student";
 import { isCoordinator } from "../middleware/isCoordinator";
 import { validateNewStudent } from "../utils/form-validation/validateNewStudent";
+import { PaginationInput } from "./types/PaginationInput";
 import { StudentDetailsInput } from "./types/StudentDetailsInput";
 
 @ObjectType()
@@ -46,20 +45,16 @@ export class StudentResolver {
   @Query(() => PaginatedStudents)
   async allStudents(
     @Arg("population") population: string,
-    @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
-    @Arg("isCoordinator", () => Boolean, { nullable: true })
-    isCoordinator: boolean | null,
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null //very first items wont have a cursor so it can be null
+    @Arg("options") options: PaginationInput
   ): Promise<PaginatedStudents> {
-    const realLimit = Math.min(20, limit);
+    const realLimit = Math.min(20, options.limit);
     const realLimitPlusOne = realLimit + 1;
     const query = getConnection()
       .getRepository(Student)
       .createQueryBuilder("s");
 
     //Checking to see if a coordinator is asking for the student table, in which case show all students
-    if (isCoordinator) {
+    if (options.isCoordinator) {
       query
         .where("population = :population", {
           population,
@@ -67,10 +62,10 @@ export class StudentResolver {
         .orderBy('"createdAt"', "DESC")
         .take(realLimitPlusOne);
 
-      if (cursor) {
+      if (options.cursor) {
         query.andWhere('"createdAt" < :cursor', {
           //Based on ordering, thats what you will paginate
-          cursor: new Date(parseInt(cursor)),
+          cursor: new Date(parseInt(options.cursor)),
         });
       }
 
@@ -82,10 +77,10 @@ export class StudentResolver {
     }
 
     //Only care about pagination if a coach id is given
-    if (coachID) {
+    if (options.coachID) {
       query
         .where('"assignedCoachID" = :coachID', {
-          coachID: coachID,
+          coachID: options.coachID,
         })
         .orderBy('"createdAt"', "DESC") //What you want to order the list by
         .take(realLimitPlusOne);
@@ -98,10 +93,10 @@ export class StudentResolver {
           population,
         });
 
-        if (cursor) {
+        if (options.cursor) {
           query.andWhere('"createdAt" < :cursor', {
             //Based on ordering, thats what you will paginate
-            cursor: new Date(parseInt(cursor)),
+            cursor: new Date(parseInt(options.cursor)),
           });
         }
       }

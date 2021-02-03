@@ -1,10 +1,5 @@
-query AllMeetings(
-  $coachID: Float!
-  $limit: Int!
-  $cursor: String
-  $week: Float!
-) {
-  allMeetings(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+query AllMeetings($options: PaginationInput!, $week: Float!) {
+  allMeetings(week: $week, options: $options) {
     hasMore
     allMeetings {
       ...BasicMeeting

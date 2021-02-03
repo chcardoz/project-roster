@@ -25,26 +25,19 @@ export type Query = {
 
 
 export type QueryAllStudentsArgs = {
-  cursor?: Maybe<Scalars['String']>;
-  limit: Scalars['Int'];
-  isCoordinator?: Maybe<Scalars['Boolean']>;
-  coachID?: Maybe<Scalars['Float']>;
+  options: PaginationInput;
   population: Scalars['String'];
 };
 
 
 export type QueryAllMeetingsArgs = {
-  cursor?: Maybe<Scalars['String']>;
-  limit: Scalars['Int'];
-  coachID?: Maybe<Scalars['Float']>;
+  options: PaginationInput;
   week: Scalars['Float'];
 };
 
 
 export type QueryAllOutreachArgs = {
-  cursor?: Maybe<Scalars['String']>;
-  limit: Scalars['Int'];
-  coachID?: Maybe<Scalars['Float']>;
+  options: PaginationInput;
   week: Scalars['Float'];
 };
 
@@ -80,6 +73,13 @@ export type PaginatedStudents = {
   __typename?: 'PaginatedStudents';
   allStudents: Array<Student>;
   hasMore: Scalars['Boolean'];
+};
+
+export type PaginationInput = {
+  coachID?: Maybe<Scalars['Float']>;
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  isCoordinator?: Maybe<Scalars['Boolean']>;
 };
 
 export type PaginatedMeetings = {
@@ -453,9 +453,7 @@ export type RegisterMutation = (
 );
 
 export type AllMeetingsQueryVariables = Exact<{
-  coachID: Scalars['Float'];
-  limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['String']>;
+  options: PaginationInput;
   week: Scalars['Float'];
 }>;
 
@@ -473,9 +471,7 @@ export type AllMeetingsQuery = (
 );
 
 export type AllOutreachQueryVariables = Exact<{
-  coachID: Scalars['Float'];
-  limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['String']>;
+  options: PaginationInput;
   week: Scalars['Float'];
 }>;
 
@@ -493,11 +489,8 @@ export type AllOutreachQuery = (
 );
 
 export type AllStudentsQueryVariables = Exact<{
-  coachID: Scalars['Float'];
-  limit: Scalars['Int'];
-  cursor?: Maybe<Scalars['String']>;
   population: Scalars['String'];
-  isCoordinator: Scalars['Boolean'];
+  options: PaginationInput;
 }>;
 
 
@@ -732,8 +725,8 @@ export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
 export const AllMeetingsDocument = gql`
-    query AllMeetings($coachID: Float!, $limit: Int!, $cursor: String, $week: Float!) {
-  allMeetings(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+    query AllMeetings($options: PaginationInput!, $week: Float!) {
+  allMeetings(week: $week, options: $options) {
     hasMore
     allMeetings {
       ...BasicMeeting
@@ -746,8 +739,8 @@ export function useAllMeetingsQuery(options: Omit<Urql.UseQueryArgs<AllMeetingsQ
   return Urql.useQuery<AllMeetingsQuery>({ query: AllMeetingsDocument, ...options });
 };
 export const AllOutreachDocument = gql`
-    query AllOutreach($coachID: Float!, $limit: Int!, $cursor: String, $week: Float!) {
-  allOutreach(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+    query AllOutreach($options: PaginationInput!, $week: Float!) {
+  allOutreach(week: $week, options: $options) {
     hasMore
     allOutreach {
       ...BasicOutreach
@@ -760,14 +753,8 @@ export function useAllOutreachQuery(options: Omit<Urql.UseQueryArgs<AllOutreachQ
   return Urql.useQuery<AllOutreachQuery>({ query: AllOutreachDocument, ...options });
 };
 export const AllStudentsDocument = gql`
-    query AllStudents($coachID: Float!, $limit: Int!, $cursor: String, $population: String!, $isCoordinator: Boolean!) {
-  allStudents(
-    population: $population
-    coachID: $coachID
-    limit: $limit
-    cursor: $cursor
-    isCoordinator: $isCoordinator
-  ) {
+    query AllStudents($population: String!, $options: PaginationInput!) {
+  allStudents(population: $population, options: $options) {
     hasMore
     allStudents {
       ...BasicStudent

@@ -1,13 +1,7 @@
-import { Meeting } from "../entities/Meeting";
-import { isCoach } from "../middleware/isCoach";
-import { MyContext } from "../types";
-import { validateNewMeeting } from "../utils/form-validation/validateNewMeeting";
 import {
   Arg,
   Ctx,
   Field,
-  Float,
-  Int,
   Mutation,
   ObjectType,
   Query,
@@ -15,8 +9,13 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
+import { Meeting } from "../entities/Meeting";
+import { isCoach } from "../middleware/isCoach";
+import { MyContext } from "../types";
+import { validateNewMeeting } from "../utils/form-validation/validateNewMeeting";
+import { getNumberOfWeek } from "../utils/getWeekNumber";
 import { MeetingInput } from "./types/MeetingInput";
-import { getNumberOfWeek, getWeekNumber } from "../utils/getWeekNumber";
+import { PaginationInput } from "./types/PaginationInput";
 
 @ObjectType()
 class MeetingFieldError {
@@ -48,10 +47,7 @@ export class MeetingResolver {
   @Query(() => PaginatedMeetings)
   async allMeetings(
     @Arg("week") week: number,
-    @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
-    @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
-    @Ctx() { req }: MyContext
+    @Arg("options") { limit, cursor, isCoordinator, coachID }: PaginationInput
   ): Promise<PaginatedMeetings> {
     const realLimit = Math.min(20, limit);
     const realLimitPlusOne = realLimit + 1;
@@ -59,7 +55,7 @@ export class MeetingResolver {
       .getRepository(Meeting)
       .createQueryBuilder("m");
 
-    if (req.session.isCoordinator) {
+    if (isCoordinator) {
       query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
 
       if (cursor) {

@@ -9,9 +9,9 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useMeQuery } from "../generated/graphql";
-import { PopulationTabs } from "../components/tables/PopulationTabs";
 import React from "react";
 import { RecordMeetingModal } from "../components/modals/RecordMeetingModal";
+import { WeekTabs } from "../components/tables/WeekTabs";
 
 const Meetings = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -38,7 +38,7 @@ const Meetings = () => {
         <RecordMeetingModal isOpen={isOpen} onClose={onClose} />
       </>
     );
-    tabs = <PopulationTabs />;
+    tabs = <WeekTabs variant="meeting" />;
   }
 
   return (

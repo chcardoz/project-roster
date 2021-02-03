@@ -1,17 +1,5 @@
-query AllStudents(
-  $coachID: Float!
-  $limit: Int!
-  $cursor: String
-  $population: String!
-  $isCoordinator: Boolean!
-) {
-  allStudents(
-    population: $population
-    coachID: $coachID
-    limit: $limit
-    cursor: $cursor
-    isCoordinator: $isCoordinator
-  ) {
+query AllStudents($population: String!, $options: PaginationInput!) {
+  allStudents(population: $population, options: $options) {
     hasMore
     allStudents {
       ...BasicStudent

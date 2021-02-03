@@ -16,30 +16,23 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
+import { useAllOutreachQuery, useMeQuery } from "../../generated/graphql";
 
 interface OutreachTableProps {
-  week: string;
+  week: number;
 }
 
-export const OutreachTable: React.FC<OutreachTableProps> = ({
-  week: population,
-}) => {
+export const OutreachTable: React.FC<OutreachTableProps> = ({ week }) => {
   const [variables, setVariables] = useState({
     limit: 5,
     cursor: null as null | string,
   });
   const [{ data: coachData }] = useMeQuery();
-  const [{ data, fetching }] = useAllStudentsQuery({
+  const [{ data, fetching }] = useAllOutreachQuery({
     variables: {
-      isCoordinator:
-        coachData?.currentCoach === null
-          ? null
-          : coachData?.currentCoach.isCoordinator,
-      population: population,
-      coachID:
-        coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
-      ...variables, //your pagination parameters like limit and cursor
+      options: {
+        ...variables,
+      },
     },
   });
 

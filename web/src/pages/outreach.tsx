@@ -9,9 +9,9 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { useMeQuery } from "../generated/graphql";
-import { PopulationTabs } from "../components/tables/PopulationTabs";
 import React from "react";
 import { RecordOutreachModal } from "../components/modals/RecordOutreachModal";
+import { WeekTabs } from "../components/tables/WeekTabs";
 
 const Outreach = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -37,7 +37,7 @@ const Outreach = () => {
         <RecordOutreachModal isOpen={isOpen} onClose={onClose} />
       </>
     );
-    tabs = <PopulationTabs />;
+    tabs = <WeekTabs variant="outreach" />;
   }
 
   return (

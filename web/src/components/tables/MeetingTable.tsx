@@ -19,7 +19,7 @@ import React, { useState } from "react";
 import { useAllMeetingsQuery, useMeQuery } from "../../generated/graphql";
 
 interface MeetingTableProps {
-  week: string;
+  week: number;
 }
 
 export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
@@ -30,7 +30,7 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllMeetingsQuery({
     variables: {
-      week: parseInt(week),
+      week,
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
       ...variables, //your pagination parameters like limit and cursor
