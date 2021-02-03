@@ -40,6 +40,10 @@ export class Outreach extends BaseEntity {
   @Column()
   outreachDate: Date;
 
+  @Field(() => Int)
+  @Column()
+  week: number;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;

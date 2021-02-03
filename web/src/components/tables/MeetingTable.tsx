@@ -16,7 +16,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
+import { useAllMeetingsQuery, useMeQuery } from "../../generated/graphql";
 
 interface MeetingTableProps {
   week: string;
@@ -28,13 +28,9 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
     cursor: null as null | string,
   });
   const [{ data: coachData }] = useMeQuery();
-  const [{ data, fetching }] = useAllStudentsQuery({
+  const [{ data, fetching }] = useAllMeetingsQuery({
     variables: {
-      isCoordinator:
-        coachData?.currentCoach === null
-          ? null
-          : coachData?.currentCoach.isCoordinator,
-      population: week,
+      week: parseInt(week),
       coachID:
         coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
       ...variables, //your pagination parameters like limit and cursor
@@ -61,11 +57,11 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
       </Tr>
     );
   } else {
-    tableBody = data?.allStudents.allStudents.map((student) => (
-      <Tr key={student.id}>
-        <Td>{student.firstName}</Td>
-        <Td>{student.lastName}</Td>
-        <Td>{student.email}</Td>
+    tableBody = data?.allMeetings.allMeetings.map((meeting) => (
+      <Tr key={meeting.id}>
+        <Td>{meeting.coachID}</Td>
+        <Td>{meeting.studentID}</Td>
+        <Td>{meeting.meetingDate}</Td>
         <Td>
           <Menu>
             <MenuButton as={Button}>Actions</MenuButton>
@@ -95,15 +91,15 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
         </Thead>
         <Tbody>{tableBody}</Tbody>
       </Table>
-      {data && data?.allStudents.hasMore ? (
+      {data && data?.allMeetings.hasMore ? (
         <Flex>
           <Button
             onClick={() => {
               setVariables({
                 limit: variables.limit + 5,
                 cursor:
-                  data.allStudents.allStudents[
-                    data.allStudents.allStudents.length - 1
+                  data.allMeetings.allMeetings[
+                    data.allMeetings.allMeetings.length - 1
                   ].createdAt,
               });
             }}

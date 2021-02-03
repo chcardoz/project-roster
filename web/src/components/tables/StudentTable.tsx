@@ -58,9 +58,9 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
         <Td>{student.email}</Td>
         <Td>
           {coachData?.currentCoach.isCoordinator ? (
-            <CoordinatorActions />
+            <CoordinatorActions student={student} />
           ) : (
-            <CoachActions />
+            <CoachActions student={student} />
           )}
         </Td>
       </Tr>

@@ -1,9 +1,15 @@
 import { Menu, MenuButton, Button, MenuList, MenuItem } from "@chakra-ui/react";
 import React from "react";
+import { Student } from "../../../generated/graphql";
 
-interface CoachActionsProps {}
+interface CoachActionsProps {
+  student: Pick<
+    Student,
+    "id" | "email" | "firstName" | "lastName" | "createdAt"
+  >;
+}
 
-export const CoachActions: React.FC<CoachActionsProps> = ({}) => {
+export const CoachActions: React.FC<CoachActionsProps> = ({ student }) => {
   return (
     <Menu>
       <MenuButton as={Button}>Actions</MenuButton>

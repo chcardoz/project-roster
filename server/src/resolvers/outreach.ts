@@ -46,6 +46,7 @@ class PaginatedOutreach {
 export class OutreachResolver {
   @Query(() => PaginatedOutreach)
   async allOutreach(
+    @Arg("week") week: number,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
@@ -57,7 +58,6 @@ export class OutreachResolver {
       .getRepository(Outreach)
       .createQueryBuilder("o");
 
-    //Checking to see if a coordinator is asking for the mweeting table, in which case show all meeting
     if (req.session.isCoordinator) {
       query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
 
@@ -74,7 +74,6 @@ export class OutreachResolver {
       };
     }
 
-    //Only care about pagination if a coach id is given
     if (coachID) {
       query
         .where('"assignedCoachID" = :coachID', {
@@ -85,11 +84,10 @@ export class OutreachResolver {
 
       const test = await query.getMany();
 
-      //Just means that the coach has some students
       if (test.length !== 0) {
-        // query.andWhere('"weekNumber" = :week', {
-        //   week,
-        // });
+        query.andWhere("week = :week", {
+          week,
+        });
 
         if (cursor) {
           query.andWhere('"createdAt" < :cursor', {
@@ -106,7 +104,6 @@ export class OutreachResolver {
       };
     }
 
-    //The same data shape if you entered a coach id who has no students.
     return {
       allOutreach: [],
       hasMore: false,

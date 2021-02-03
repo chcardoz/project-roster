@@ -1,0 +1,13 @@
+query AllOutreach(
+  $coachID: Float!
+  $limit: Int!
+  $cursor: String
+  $week: Float!
+) {
+  allOutreach(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+    hasMore
+    allOutreach {
+      ...BasicOutreach
+    }
+  }
+}

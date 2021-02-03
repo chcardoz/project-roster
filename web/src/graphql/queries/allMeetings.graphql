@@ -1,0 +1,13 @@
+query AllMeetings(
+  $coachID: Float!
+  $limit: Int!
+  $cursor: String
+  $week: Float!
+) {
+  allMeetings(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+    hasMore
+    allMeetings {
+      ...BasicMeeting
+    }
+  }
+}

@@ -14,11 +14,7 @@ query AllStudents(
   ) {
     hasMore
     allStudents {
-      id
-      createdAt
-      firstName
-      lastName
-      email
+      ...BasicStudent
     }
   }
 }

@@ -8,6 +8,8 @@ fragment BasicUser on Coach {
 }
 
 fragment BasicStudent on Student {
+  id
+  createdAt
   email
   firstName
   lastName
@@ -19,15 +21,21 @@ fragment BasicStudent on Student {
 }
 
 fragment BasicMeeting on Meeting {
+  id
+  createdAt
   coachID
   studentID
   meetingDate
   duration
+  week
 }
 
 fragment BasicOutreach on Outreach {
+  id
+  createdAt
   coachID
   studentID
   outreachDate
   type
+  week
 }

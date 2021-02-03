@@ -37,7 +37,7 @@ export type QueryAllMeetingsArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   coachID?: Maybe<Scalars['Float']>;
-  weekNo: Scalars['Float'];
+  week: Scalars['Float'];
 };
 
 
@@ -45,7 +45,7 @@ export type QueryAllOutreachArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   coachID?: Maybe<Scalars['Float']>;
-  weekNo: Scalars['Float'];
+  week: Scalars['Float'];
 };
 
 export type Coach = {
@@ -97,6 +97,7 @@ export type Meeting = {
   studentID: Scalars['Int'];
   meetingDate: Scalars['String'];
   duration: Scalars['Int'];
+  week: Scalars['Int'];
 };
 
 export type PaginatedOutreach = {
@@ -112,6 +113,7 @@ export type Outreach = {
   coachID: Scalars['Int'];
   studentID: Scalars['Int'];
   outreachDate: Scalars['String'];
+  week: Scalars['Int'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -285,17 +287,17 @@ export type BasicUserFragment = (
 
 export type BasicStudentFragment = (
   { __typename?: 'Student' }
-  & Pick<Student, 'email' | 'firstName' | 'lastName' | 'population' | 'isActive' | 'meetingFrequency' | 'modeOfMeeting' | 'assignedCoachID'>
+  & Pick<Student, 'id' | 'createdAt' | 'email' | 'firstName' | 'lastName' | 'population' | 'isActive' | 'meetingFrequency' | 'modeOfMeeting' | 'assignedCoachID'>
 );
 
 export type BasicMeetingFragment = (
   { __typename?: 'Meeting' }
-  & Pick<Meeting, 'coachID' | 'studentID' | 'meetingDate' | 'duration'>
+  & Pick<Meeting, 'id' | 'createdAt' | 'coachID' | 'studentID' | 'meetingDate' | 'duration' | 'week'>
 );
 
 export type BasicOutreachFragment = (
   { __typename?: 'Outreach' }
-  & Pick<Outreach, 'coachID' | 'studentID' | 'outreachDate' | 'type'>
+  & Pick<Outreach, 'id' | 'createdAt' | 'coachID' | 'studentID' | 'outreachDate' | 'type' | 'week'>
 );
 
 export type BasicOutreachResponseFragment = (
@@ -450,6 +452,46 @@ export type RegisterMutation = (
   ) }
 );
 
+export type AllMeetingsQueryVariables = Exact<{
+  coachID: Scalars['Float'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  week: Scalars['Float'];
+}>;
+
+
+export type AllMeetingsQuery = (
+  { __typename?: 'Query' }
+  & { allMeetings: (
+    { __typename?: 'PaginatedMeetings' }
+    & Pick<PaginatedMeetings, 'hasMore'>
+    & { allMeetings: Array<(
+      { __typename?: 'Meeting' }
+      & BasicMeetingFragment
+    )> }
+  ) }
+);
+
+export type AllOutreachQueryVariables = Exact<{
+  coachID: Scalars['Float'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+  week: Scalars['Float'];
+}>;
+
+
+export type AllOutreachQuery = (
+  { __typename?: 'Query' }
+  & { allOutreach: (
+    { __typename?: 'PaginatedOutreach' }
+    & Pick<PaginatedOutreach, 'hasMore'>
+    & { allOutreach: Array<(
+      { __typename?: 'Outreach' }
+      & BasicOutreachFragment
+    )> }
+  ) }
+);
+
 export type AllStudentsQueryVariables = Exact<{
   coachID: Scalars['Float'];
   limit: Scalars['Int'];
@@ -466,7 +508,7 @@ export type AllStudentsQuery = (
     & Pick<PaginatedStudents, 'hasMore'>
     & { allStudents: Array<(
       { __typename?: 'Student' }
-      & Pick<Student, 'id' | 'createdAt' | 'firstName' | 'lastName' | 'email'>
+      & BasicStudentFragment
     )> }
   ) }
 );
@@ -490,10 +532,13 @@ export const OutreachErrorFragmentDoc = gql`
     `;
 export const BasicOutreachFragmentDoc = gql`
     fragment BasicOutreach on Outreach {
+  id
+  createdAt
   coachID
   studentID
   outreachDate
   type
+  week
 }
     `;
 export const BasicOutreachResponseFragmentDoc = gql`
@@ -515,10 +560,13 @@ export const MeetingErrorFragmentDoc = gql`
     `;
 export const BasicMeetingFragmentDoc = gql`
     fragment BasicMeeting on Meeting {
+  id
+  createdAt
   coachID
   studentID
   meetingDate
   duration
+  week
 }
     `;
 export const BasicMeetingResponseFragmentDoc = gql`
@@ -567,6 +615,8 @@ export const StudentErrorFragmentDoc = gql`
     `;
 export const BasicStudentFragmentDoc = gql`
     fragment BasicStudent on Student {
+  id
+  createdAt
   email
   firstName
   lastName
@@ -681,6 +731,34 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const AllMeetingsDocument = gql`
+    query AllMeetings($coachID: Float!, $limit: Int!, $cursor: String, $week: Float!) {
+  allMeetings(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+    hasMore
+    allMeetings {
+      ...BasicMeeting
+    }
+  }
+}
+    ${BasicMeetingFragmentDoc}`;
+
+export function useAllMeetingsQuery(options: Omit<Urql.UseQueryArgs<AllMeetingsQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AllMeetingsQuery>({ query: AllMeetingsDocument, ...options });
+};
+export const AllOutreachDocument = gql`
+    query AllOutreach($coachID: Float!, $limit: Int!, $cursor: String, $week: Float!) {
+  allOutreach(week: $week, coachID: $coachID, limit: $limit, cursor: $cursor) {
+    hasMore
+    allOutreach {
+      ...BasicOutreach
+    }
+  }
+}
+    ${BasicOutreachFragmentDoc}`;
+
+export function useAllOutreachQuery(options: Omit<Urql.UseQueryArgs<AllOutreachQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<AllOutreachQuery>({ query: AllOutreachDocument, ...options });
+};
 export const AllStudentsDocument = gql`
     query AllStudents($coachID: Float!, $limit: Int!, $cursor: String, $population: String!, $isCoordinator: Boolean!) {
   allStudents(
@@ -692,15 +770,11 @@ export const AllStudentsDocument = gql`
   ) {
     hasMore
     allStudents {
-      id
-      createdAt
-      firstName
-      lastName
-      email
+      ...BasicStudent
     }
   }
 }
-    `;
+    ${BasicStudentFragmentDoc}`;
 
 export function useAllStudentsQuery(options: Omit<Urql.UseQueryArgs<AllStudentsQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<AllStudentsQuery>({ query: AllStudentsDocument, ...options });

@@ -1,23 +1,22 @@
 import {
-  useToast,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  Center,
-  ModalCloseButton,
-  ModalBody,
-  Button,
-  ModalFooter,
-  Heading,
   Box,
+  Button,
+  Center,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useToast,
 } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
-import React, { useState } from "react";
+import { Form, Formik } from "formik";
+import React from "react";
 import { useCreateMeetingMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 import { DateField } from "../input/DateField";
-import DatePicker from "../input/DatePicker";
 import { InputField } from "../input/InputField";
 
 interface RecordMeetingModalProps {
@@ -31,7 +30,6 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({
 }) => {
   const toast = useToast();
   const [, recordMeeting] = useCreateMeetingMutation();
-  const [myDate, setMyDate] = useState();
   return (
     <Modal
       onClose={onClose}

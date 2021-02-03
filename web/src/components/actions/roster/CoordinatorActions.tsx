@@ -1,7 +1,13 @@
 import { Menu, MenuButton, Button, MenuList, MenuItem } from "@chakra-ui/react";
 import React from "react";
+import { Student } from "../../../generated/graphql";
 
-interface CoordinatorActionsProps {}
+interface CoordinatorActionsProps {
+  student: Pick<
+    Student,
+    "id" | "email" | "firstName" | "lastName" | "createdAt"
+  >;
+}
 
 export const CoordinatorActions: React.FC<CoordinatorActionsProps> = ({}) => {
   return (

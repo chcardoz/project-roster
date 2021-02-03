@@ -16,6 +16,7 @@ import {
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { MeetingInput } from "./types/MeetingInput";
+import { getNumberOfWeek, getWeekNumber } from "../utils/getWeekNumber";
 
 @ObjectType()
 class MeetingFieldError {
@@ -46,6 +47,7 @@ class PaginatedMeetings {
 export class MeetingResolver {
   @Query(() => PaginatedMeetings)
   async allMeetings(
+    @Arg("week") week: number,
     @Arg("coachID", () => Float, { nullable: true }) coachID: number | null, //The coach id can be null, when no users are logged in
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null, //very first items wont have a cursor so it can be null
@@ -57,7 +59,6 @@ export class MeetingResolver {
       .getRepository(Meeting)
       .createQueryBuilder("m");
 
-    //Checking to see if a coordinator is asking for the mweeting table, in which case show all meeting
     if (req.session.isCoordinator) {
       query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
 
@@ -73,23 +74,19 @@ export class MeetingResolver {
         hasMore: meetings.length === realLimitPlusOne,
       };
     }
-
-    //A coach is asking for meetings so show only their meeting
     if (coachID) {
       query
-        .where('"assignedCoachID" = :coachID', {
+        .where('"coachID" = :coachID', {
           coachID: coachID,
         })
         .orderBy('"createdAt"', "DESC") //What you want to order the list by
         .take(realLimitPlusOne);
 
       const test = await query.getMany();
-
-      //Just means that the coach has some students
       if (test.length !== 0) {
-        // query.andWhere('"weekNumber" = :week', {
-        //   week,
-        // });
+        query.andWhere("week = :week", {
+          week,
+        });
 
         if (cursor) {
           query.andWhere('"createdAt" < :cursor', {
@@ -134,6 +131,7 @@ export class MeetingResolver {
           coachID: req.session.userId,
           meetingDate: new Date(options.meetingDate),
           duration: options.duration,
+          week: getNumberOfWeek(options.meetingDate) - 4,
         })
         .returning("*")
         .execute();
