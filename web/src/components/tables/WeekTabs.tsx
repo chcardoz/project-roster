@@ -17,7 +17,7 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({ variant = "meeting" }) => {
     Table = OutreachTable;
   }
   for (let i = 1; i <= MAXWEEKS; i++) {
-    tabs.push(<Tab>Week {i}</Tab>);
+    tabs.push(<Tab>Wk {i}</Tab>);
     tabpanels.push(
       <TabPanel>
         <Table week={i} />
@@ -25,7 +25,7 @@ export const WeekTabs: React.FC<WeekTabsProps> = ({ variant = "meeting" }) => {
     );
   }
   return (
-    <Tabs>
+    <Tabs isLazy isFitted>
       <TabList>{tabs}</TabList>
 
       <TabPanels>{tabpanels}</TabPanels>

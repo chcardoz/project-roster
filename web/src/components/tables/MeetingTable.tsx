@@ -31,9 +31,15 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
   const [{ data, fetching }] = useAllMeetingsQuery({
     variables: {
       week,
-      coachID:
-        coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
-      ...variables, //your pagination parameters like limit and cursor
+      options: {
+        ...variables,
+        coachID:
+          coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
+        isCoordinator:
+          coachData?.currentCoach === null
+            ? null
+            : coachData?.currentCoach.isCoordinator,
+      },
     },
   });
 
@@ -57,35 +63,37 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ week }) => {
       </Tr>
     );
   } else {
-    tableBody = data?.allMeetings.allMeetings.map((meeting) => (
-      <Tr key={meeting.id}>
-        <Td>{meeting.coachID}</Td>
-        <Td>{meeting.studentID}</Td>
-        <Td>{meeting.meetingDate}</Td>
-        <Td>
-          <Menu>
-            <MenuButton as={Button}>Actions</MenuButton>
-            <MenuList>
-              <MenuItem>Request to be removed</MenuItem>
-              <MenuItem>Edit Details</MenuItem>
-              <MenuItem>Remove</MenuItem>
-              <MenuItem>Add outreach</MenuItem>
-              <MenuItem>Add a meeting</MenuItem>
-            </MenuList>
-          </Menu>
-        </Td>
-      </Tr>
-    ));
+    tableBody = data?.allMeetings.allMeetings.map((meeting) => {
+      return (
+        <Tr key={meeting.id}>
+          <Td>{meeting.coachID}</Td>
+          <Td>{meeting.studentID}</Td>
+          <Td>{meeting.meetingDate}</Td>
+          <Td>
+            <Menu>
+              <MenuButton as={Button}>Actions</MenuButton>
+              <MenuList>
+                <MenuItem>Request to be removed</MenuItem>
+                <MenuItem>Edit Details</MenuItem>
+                <MenuItem>Remove</MenuItem>
+                <MenuItem>Add outreach</MenuItem>
+                <MenuItem>Add a meeting</MenuItem>
+              </MenuList>
+            </Menu>
+          </Td>
+        </Tr>
+      );
+    });
   }
 
   return (
     <>
-      <Table variant="striped" colorScheme="facebook">
+      <Table size="sm" variant="striped" colorScheme="facebook">
         <Thead>
           <Tr>
-            <Th>First Name</Th>
-            <Th>Last Name</Th>
-            <Th>Email</Th>
+            <Th>Coach ID</Th>
+            <Th>Student ID</Th>
+            <Th>Date</Th>
             <Th></Th>
           </Tr>
         </Thead>

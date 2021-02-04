@@ -1,5 +1,6 @@
 import { Menu, MenuButton, Button, MenuList, MenuItem } from "@chakra-ui/react";
 import React from "react";
+import { StudentContext } from "../../../context/student-context";
 import { Student } from "../../../generated/graphql";
 
 interface CoachActionsProps {
@@ -11,13 +12,17 @@ interface CoachActionsProps {
 
 export const CoachActions: React.FC<CoachActionsProps> = ({ student }) => {
   return (
-    <Menu>
-      <MenuButton as={Button}>Actions</MenuButton>
-      <MenuList>
-        <MenuItem>Record outreach</MenuItem>
-        <MenuItem>Record meeting</MenuItem>
-        <MenuItem>Request to be removed</MenuItem>
-      </MenuList>
-    </Menu>
+    <StudentContext.Consumer>
+      {(context) => (
+        <Menu>
+          <MenuButton as={Button}>Actions</MenuButton>
+          <MenuList>
+            <MenuItem>Record outreach</MenuItem>
+            <MenuItem onClick={context.onOpen}>Record meeting</MenuItem>
+            <MenuItem>Request to be removed</MenuItem>
+          </MenuList>
+        </Menu>
+      )}
+    </StudentContext.Consumer>
   );
 };

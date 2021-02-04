@@ -12,9 +12,13 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { StudentContext } from "../../context/student-context";
+import { StudentModalState } from "../../context/StudentModalState";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
 import { CoachActions } from "../actions/roster/CoachActions";
 import { CoordinatorActions } from "../actions/roster/CoordinatorActions";
+import { RecordMeetingModal } from "../modals/RecordMeetingModal";
+import { RecordOutreachModal } from "../modals/RecordOutreachModal";
 
 interface StudentTableProps {
   population: string;
@@ -28,14 +32,17 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllStudentsQuery({
     variables: {
-      isCoordinator:
-        coachData?.currentCoach === null
-          ? null
-          : coachData?.currentCoach.isCoordinator,
+      options: {
+        isCoordinator:
+          coachData?.currentCoach === null
+            ? null
+            : coachData?.currentCoach.isCoordinator,
+
+        coachID:
+          coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
+        ...variables,
+      },
       population,
-      coachID:
-        coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
-      ...variables, //your pagination parameters like limit and cursor
     },
   });
 
@@ -68,8 +75,8 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
   }
 
   return (
-    <>
-      <Table variant="striped" colorScheme="facebook">
+    <StudentModalState>
+      <Table size="sm" variant="striped" colorScheme="facebook">
         <Thead>
           <Tr>
             <Th>First Name</Th>
@@ -100,6 +107,6 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
           </Button>
         </Flex>
       ) : null}
-    </>
+    </StudentModalState>
   );
 };

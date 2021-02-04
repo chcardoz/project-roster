@@ -1,20 +1,12 @@
 import { withUrqlClient } from "next-urql";
 import { Wrapper } from "../components/Wrapper";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import {
-  Heading,
-  Text,
-  useDisclosure,
-  Button,
-  Spinner,
-} from "@chakra-ui/react";
+import { Heading, Text, Spinner } from "@chakra-ui/react";
 import { useMeQuery } from "../generated/graphql";
 import React from "react";
-import { RecordMeetingModal } from "../components/modals/RecordMeetingModal";
 import { WeekTabs } from "../components/tables/WeekTabs";
 
 const Meetings = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [{ data, fetching }] = useMeQuery();
 
   let header = null;
@@ -30,12 +22,8 @@ const Meetings = () => {
         <Heading>MEETINGS</Heading>
         <Text mt={3}>
           Find all of your meetings here. After having a meeting with a student,
-          you can record it with the button below.
+          you can record it by using the actions option next to every student.
         </Text>
-        <Button mt={5} onClick={onOpen} rounded="full">
-          Record Meeting
-        </Button>
-        <RecordMeetingModal isOpen={isOpen} onClose={onClose} />
       </>
     );
     tabs = <WeekTabs variant="meeting" />;

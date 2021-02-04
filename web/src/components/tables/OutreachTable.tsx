@@ -30,8 +30,15 @@ export const OutreachTable: React.FC<OutreachTableProps> = ({ week }) => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllOutreachQuery({
     variables: {
+      week,
       options: {
         ...variables,
+        coachID:
+          coachData?.currentCoach === null ? null : coachData?.currentCoach.id,
+        isCoordinator:
+          coachData?.currentCoach === null
+            ? null
+            : coachData?.currentCoach.isCoordinator,
       },
     },
   });
@@ -56,11 +63,11 @@ export const OutreachTable: React.FC<OutreachTableProps> = ({ week }) => {
       </Tr>
     );
   } else {
-    tableBody = data?.allStudents.allStudents.map((student) => (
+    tableBody = data?.allOutreach.allOutreach.map((student) => (
       <Tr key={student.id}>
-        <Td>{student.firstName}</Td>
-        <Td>{student.lastName}</Td>
-        <Td>{student.email}</Td>
+        <Td>{student.coachID}</Td>
+        <Td>{student.studentID}</Td>
+        <Td>{student.outreachDate}</Td>
         <Td>
           <Menu>
             <MenuButton as={Button}>Actions</MenuButton>
@@ -79,26 +86,26 @@ export const OutreachTable: React.FC<OutreachTableProps> = ({ week }) => {
 
   return (
     <>
-      <Table variant="striped" colorScheme="facebook">
+      <Table size="sm" variant="striped" colorScheme="facebook">
         <Thead>
           <Tr>
-            <Th>First Name</Th>
-            <Th>Last Name</Th>
-            <Th>Email</Th>
+            <Th>Coach</Th>
+            <Th>Student</Th>
+            <Th>Date of Outreach</Th>
             <Th></Th>
           </Tr>
         </Thead>
         <Tbody>{tableBody}</Tbody>
       </Table>
-      {data && data?.allStudents.hasMore ? (
+      {data && data?.allOutreach.hasMore ? (
         <Flex>
           <Button
             onClick={() => {
               setVariables({
                 limit: variables.limit + 5,
                 cursor:
-                  data.allStudents.allStudents[
-                    data.allStudents.allStudents.length - 1
+                  data.allOutreach.allOutreach[
+                    data.allOutreach.allOutreach.length - 1
                   ].createdAt,
               });
             }}
