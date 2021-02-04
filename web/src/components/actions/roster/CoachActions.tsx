@@ -18,7 +18,15 @@ export const CoachActions: React.FC<CoachActionsProps> = ({ student }) => {
           <MenuButton as={Button}>Actions</MenuButton>
           <MenuList>
             <MenuItem>Record outreach</MenuItem>
-            <MenuItem onClick={context.onOpen}>Record meeting</MenuItem>
+            <MenuItem
+              onClick={() => {
+                console.log(student.firstName);
+                context.updateStudent(student);
+                context.onOpen();
+              }}
+            >
+              Record meeting
+            </MenuItem>
             <MenuItem>Request to be removed</MenuItem>
           </MenuList>
         </Menu>

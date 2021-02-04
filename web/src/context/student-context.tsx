@@ -1,11 +1,20 @@
 import React from "react";
+import { Student } from "../generated/graphql";
 
-export const StudentContext = React.createContext({
-  student: "",
-  onOpen: () => {},
-  onClose: () => {},
-  isOpen: true,
-  updateStudent: (student: string) => {
-    console.log(student);
-  },
-});
+type ContextProps = {
+  onClose: () => void;
+  onOpen: () => void;
+  isOpen: boolean;
+  student: Pick<
+    Student,
+    "id" | "email" | "firstName" | "lastName" | "createdAt"
+  >;
+  updateStudent: (
+    _student: Pick<
+      Student,
+      "id" | "email" | "firstName" | "lastName" | "createdAt"
+    >
+  ) => void;
+};
+
+export const StudentContext = React.createContext<ContextProps>(null);

@@ -76,6 +76,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
 
   return (
     <StudentModalState>
+      <RecordMeetingModal />
       <Table size="sm" variant="striped" colorScheme="facebook">
         <Thead>
           <Tr>

@@ -49,16 +49,16 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
             <ModalBody>
               <Formik
                 initialValues={{
-                  studentID: context.student,
+                  studentID: "",
                   meetingDate: "",
                   duration: "",
                 }}
                 onSubmit={async (values, { setErrors }) => {
-                  console.log(values);
+                  console.log(context.student);
                   const response = await recordMeeting({
                     options: {
                       duration: parseInt(values.duration),
-                      studentID: parseInt(values.studentID),
+                      studentID: context.student.id,
                       meetingDate: values.meetingDate,
                     },
                   });
@@ -91,9 +91,10 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
                 {({ isSubmitting }) => (
                   <Form>
                     <InputField
+                      disabled
                       autoFocus
                       name="studentID"
-                      placeholder="student id"
+                      placeholder={context.student.firstName}
                       label="Student ID"
                     />
                     <Box mt={4}>
