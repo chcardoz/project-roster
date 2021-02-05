@@ -28,7 +28,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
   onClose,
 }) => {
   const toast = useToast();
-  const [, register] = useRegisterMutation(); //To know the types from the server response
+  const [, register] = useRegisterMutation();
   return (
     <Modal
       onClose={onClose}
@@ -55,10 +55,12 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
               lastName: "",
             }}
             onSubmit={async (values, { setErrors }) => {
-              const response = await register({ options: values });
-              if (response.data?.registerCoach.errors) {
-                setErrors(toErrorMap(response.data.registerCoach.errors));
-              } else if (response.data?.registerCoach.coach != null) {
+              const { data, error } = await register({ options: values });
+              if (error) {
+                //TODO: Toast or alert the combined error from the server
+              } else if (data?.registerCoach.errors) {
+                setErrors(toErrorMap(data?.registerCoach.errors));
+              } else if (data?.registerCoach.coach != null) {
                 onClose();
                 toast({
                   title: "Account created.",

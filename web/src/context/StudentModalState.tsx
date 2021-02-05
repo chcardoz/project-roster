@@ -9,6 +9,11 @@ export const StudentModalState: React.FC<StudentModalStateProps> = ({
   children,
 }) => {
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const {
+    onOpen: onOpenOutreach,
+    onClose: onCloseOutreach,
+    isOpen: isOpenOutreach,
+  } = useDisclosure();
   const [student, setStudent] = useState<
     Pick<Student, "id" | "email" | "firstName" | "lastName" | "createdAt">
   >();
@@ -30,6 +35,9 @@ export const StudentModalState: React.FC<StudentModalStateProps> = ({
         isOpen,
         student,
         updateStudent,
+        onOpenOutreach,
+        onCloseOutreach,
+        isOpenOutreach,
       }}
     >
       {children}

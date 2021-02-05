@@ -17,10 +17,16 @@ export const CoachActions: React.FC<CoachActionsProps> = ({ student }) => {
         <Menu>
           <MenuButton as={Button}>Actions</MenuButton>
           <MenuList>
-            <MenuItem>Record outreach</MenuItem>
             <MenuItem
               onClick={() => {
-                console.log(student.firstName);
+                context.updateStudent(student);
+                context.onOpenOutreach();
+              }}
+            >
+              Record outreach
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
                 context.updateStudent(student);
                 context.onOpen();
               }}

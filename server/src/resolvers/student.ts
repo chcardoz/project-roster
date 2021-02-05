@@ -53,7 +53,6 @@ export class StudentResolver {
       .getRepository(Student)
       .createQueryBuilder("s");
 
-    //Checking to see if a coordinator is asking for the student table, in which case show all students
     if (options.isCoordinator) {
       query
         .where("population = :population", {
@@ -61,54 +60,42 @@ export class StudentResolver {
         })
         .orderBy('"createdAt"', "DESC")
         .take(realLimitPlusOne);
-
       if (options.cursor) {
         query.andWhere('"createdAt" < :cursor', {
-          //Based on ordering, thats what you will paginate
           cursor: new Date(parseInt(options.cursor)),
         });
       }
-
       const students = await query.getMany();
       return {
         allStudents: students.slice(0, realLimit),
         hasMore: students.length === realLimitPlusOne,
       };
     }
-
-    //Only care about pagination if a coach id is given
     if (options.coachID) {
       query
         .where('"assignedCoachID" = :coachID', {
           coachID: options.coachID,
         })
-        .orderBy('"createdAt"', "DESC") //What you want to order the list by
+        .orderBy('"createdAt"', "DESC")
         .take(realLimitPlusOne);
 
       const test = await query.getMany();
-
-      //Just means that the coach has some students
       if (test.length !== 0) {
         query.andWhere("population = :population", {
           population,
         });
-
         if (options.cursor) {
           query.andWhere('"createdAt" < :cursor', {
-            //Based on ordering, thats what you will paginate
             cursor: new Date(parseInt(options.cursor)),
           });
         }
       }
-
       const students = await query.getMany();
       return {
         allStudents: students.slice(0, realLimit),
         hasMore: students.length === realLimitPlusOne,
       };
     }
-
-    //The same data shape if you entered a coach id who has no students.
     return {
       allStudents: [],
       hasMore: false,

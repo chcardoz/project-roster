@@ -49,12 +49,15 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           <Formik
             initialValues={{ username: "", password: "" }}
             onSubmit={async (values, { setErrors }) => {
-              const response = await login(values);
-              //The errors with the form fields
-              if (response.data?.loginCoach.errors) {
-                setErrors(toErrorMap(response.data.loginCoach.errors));
-                //The mutation worked and we are logged in
-              } else if (response.data?.loginCoach.coach) {
+              const { data, error: serverError } = await login(values);
+              if (serverError) {
+                //TODO: A toast or alert for the server error.
+              }
+              /*    ERRORS FROM FORM VALIDATION     */
+              if (data?.loginCoach.errors) {
+                setErrors(toErrorMap(data.loginCoach.errors));
+                /*    NO ERRORS!   */
+              } else if (data?.loginCoach.coach) {
                 onClose();
               }
             }}

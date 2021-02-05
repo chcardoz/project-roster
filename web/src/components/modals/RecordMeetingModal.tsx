@@ -20,21 +20,18 @@ import { toErrorMap } from "../../utils/toErrorMap";
 import { DateField } from "../input/DateField";
 import { InputField } from "../input/InputField";
 
-interface RecordMeetingModalProps {
-  // isOpen: boolean;
-  // onClose(): void;
-}
+interface RecordMeetingModalProps {}
 
 export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
   const toast = useToast();
   const [, recordMeeting] = useCreateMeetingMutation();
   return (
     <StudentContext.Consumer>
-      {(context) => (
+      {({ onClose, isOpen, student }) => (
         <Modal
-          onClose={context.onClose}
+          onClose={onClose}
           size="md"
-          isOpen={context.isOpen}
+          isOpen={isOpen}
           isCentered
           motionPreset="slideInBottom"
         >
@@ -53,16 +50,16 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
                   meetingDate: "",
                   duration: "",
                 }}
-                onSubmit={async (values, { setErrors }) => {
-                  console.log(context.student);
-                  const response = await recordMeeting({
+                onSubmit={async ({ duration, meetingDate }, { setErrors }) => {
+                  const { data, error } = await recordMeeting({
                     options: {
-                      duration: parseInt(values.duration),
-                      studentID: context.student.id,
-                      meetingDate: values.meetingDate,
+                      duration: parseInt(duration),
+                      studentID: student.id,
+                      meetingDate: meetingDate,
                     },
                   });
-                  if (response.error) {
+                  /*    ERRORS BEFORE RUNNING THE RESOLVERS     */
+                  if (error) {
                     toast({
                       title: "Not Authenticated",
                       description: "Only coaches can record meetings",
@@ -70,12 +67,11 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
                       duration: 5000,
                       isClosable: true,
                     });
-                  } else if (response.data?.createMeeting.errors) {
-                    console.log(
-                      toErrorMap(response.data?.createMeeting.errors)
-                    );
-                    setErrors(toErrorMap(response.data?.createMeeting.errors));
-                  } else if (response.data?.createMeeting?.meeting != null) {
+                    /*    ERRORS FROM FORM VALIDATION     */
+                  } else if (data?.createMeeting.errors) {
+                    setErrors(toErrorMap(data?.createMeeting.errors));
+                    /*    NO FORM OR RESOLVER ERRORS, SO LETS GOO!!    */
+                  } else if (data?.createMeeting?.meeting) {
                     toast({
                       title: "Meeting recorded.",
                       description:
@@ -84,7 +80,7 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
                       duration: 5000,
                       isClosable: true,
                     });
-                    context.onClose();
+                    onClose();
                   }
                 }}
               >
@@ -94,8 +90,8 @@ export const RecordMeetingModal: React.FC<RecordMeetingModalProps> = ({}) => {
                       disabled
                       autoFocus
                       name="studentID"
-                      placeholder={context.student.firstName}
-                      label="Student ID"
+                      placeholder={student.firstName}
+                      label="Student"
                     />
                     <Box mt={4}>
                       <DateField label="Meeting Date" name="meetingDate" />

@@ -15,6 +15,7 @@ import { getConnection } from "typeorm";
 import { OutreachInput } from "./types/OutreachInput";
 import { validateNewOutreach } from "../utils/form-validation/validateNewOutreach";
 import { PaginationInput } from "./types/PaginationInput";
+import { getNumberOfWeek } from "../utils/getWeekNumber";
 
 @ObjectType()
 class OutreachFieldError {
@@ -72,7 +73,7 @@ export class OutreachResolver {
 
     if (coachID) {
       query
-        .where('"assignedCoachID" = :coachID', {
+        .where('"coachID" = :coachID', {
           coachID: coachID,
         })
         .orderBy('"createdAt"', "DESC") //What you want to order the list by
@@ -127,6 +128,7 @@ export class OutreachResolver {
           coachID: req.session.userId,
           outreachDate: new Date(options.outreachDate),
           type: options.type,
+          week: getNumberOfWeek(options.outreachDate) - 4,
         })
         .returning("*")
         .execute();

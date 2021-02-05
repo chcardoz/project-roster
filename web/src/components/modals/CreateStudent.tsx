@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Center,
+  Heading,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,7 +10,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
   useToast,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
@@ -44,9 +44,7 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
       <ModalContent>
         <ModalHeader>
           <Center>
-            <Text fontSize={30} fontWeight="bold">
-              CREATE NEW STUDENT
-            </Text>
+            <Heading>CREATE STUDENT</Heading>
           </Center>
         </ModalHeader>
         <ModalCloseButton />
@@ -59,9 +57,11 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
               population: "",
             }}
             onSubmit={async (values, { setErrors }) => {
-              const response = await createStudent({ options: values });
-              //Pre authentication on the server side before mutation is even attempted.
-              if (response.error) {
+              const { data, error: serverError } = await createStudent({
+                options: values,
+              });
+              /*    ERRORS BEFORE RUNNING THE RESOLVERS     */
+              if (serverError) {
                 toast({
                   title: "Not Authenticated",
                   description: "Only coordinators can create new students",
@@ -69,12 +69,12 @@ const CreateStudentModal: React.FC<CreateStudentModalProps> = ({
                   duration: 3000,
                   isClosable: true,
                 });
-                //These are the errors in the form fields
-              } else if (response.data?.createStudent.errors) {
-                console.log(toErrorMap(response.data?.createStudent?.errors));
-                setErrors(toErrorMap(response.data?.createStudent?.errors));
-                //No errors and just  to make sure that the student we are getting is not a null object
-              } else if (response.data?.createStudent?.student != null) {
+                /*    ERRORS FROM FORM VALIDATION     */
+              } else if (data?.createStudent.errors) {
+                console.log(toErrorMap(data?.createStudent?.errors));
+                setErrors(toErrorMap(data?.createStudent?.errors));
+                /*    NO FORM OR RESOLVER ERRORS, SO LETS GOO!!    */
+              } else if (data?.createStudent?.student) {
                 toast({
                   title: "Student created.",
                   description: "A new student has been successfully created.",

@@ -12,7 +12,6 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { StudentContext } from "../../context/student-context";
 import { StudentModalState } from "../../context/StudentModalState";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
 import { CoachActions } from "../actions/roster/CoachActions";
@@ -52,7 +51,8 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
     tableBody = (
       <Alert status="error">
         <AlertIcon />
-        Your query failed for some reason
+        Uh Oh!, looks like the server did a big boo boo. Please reload or try
+        again later.
       </Alert>
     );
   } else if (!data && fetching) {
@@ -76,6 +76,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({ population }) => {
 
   return (
     <StudentModalState>
+      <RecordOutreachModal />
       <RecordMeetingModal />
       <Table size="sm" variant="striped" colorScheme="facebook">
         <Thead>
