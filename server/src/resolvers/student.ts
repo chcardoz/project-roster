@@ -49,56 +49,37 @@ export class StudentResolver {
   ): Promise<PaginatedStudents> {
     const realLimit = Math.min(20, options.limit);
     const realLimitPlusOne = realLimit + 1;
-    const query = getConnection()
-      .getRepository(Student)
-      .createQueryBuilder("s");
+    const replacements: any[] = [population, realLimitPlusOne];
 
-    if (options.isCoordinator) {
-      query
-        .where("population = :population", {
-          population,
-        })
-        .orderBy('"createdAt"', "DESC")
-        .take(realLimitPlusOne);
-      if (options.cursor) {
-        query.andWhere('"createdAt" < :cursor', {
-          cursor: new Date(parseInt(options.cursor)),
-        });
-      }
-      const students = await query.getMany();
+    if (!options.coachID) {
       return {
-        allStudents: students.slice(0, realLimit),
-        hasMore: students.length === realLimitPlusOne,
+        allStudents: [],
+        hasMore: false,
       };
+    } else if (!options.isCoordinator) {
+      replacements.push(options.coachID);
     }
-    if (options.coachID) {
-      query
-        .where('"assignedCoachID" = :coachID', {
-          coachID: options.coachID,
-        })
-        .orderBy('"createdAt"', "DESC")
-        .take(realLimitPlusOne);
 
-      const test = await query.getMany();
-      if (test.length !== 0) {
-        query.andWhere("population = :population", {
-          population,
-        });
-        if (options.cursor) {
-          query.andWhere('"createdAt" < :cursor', {
-            cursor: new Date(parseInt(options.cursor)),
-          });
-        }
-      }
-      const students = await query.getMany();
-      return {
-        allStudents: students.slice(0, realLimit),
-        hasMore: students.length === realLimitPlusOne,
-      };
+    if (options.cursor) {
+      replacements.push(new Date(parseInt(options.cursor)));
     }
+
+    const students = await getConnection().query(
+      `
+        select s.*
+        from student s
+        where s."population" = $1
+        ${options.isCoordinator ? "" : `and  s."assignedCoachID" = $3`}
+        ${options.cursor ? `and s."createdAt" < $4` : ""}
+        order by s."createdAt" DESC
+        limit $2
+      `,
+      replacements
+    );
+
     return {
-      allStudents: [],
-      hasMore: false,
+      allStudents: students.slice(0, realLimit),
+      hasMore: students.length === realLimitPlusOne,
     };
   }
 
@@ -120,10 +101,7 @@ export class StudentResolver {
         .insert()
         .into(Student)
         .values({
-          email: options.email,
-          firstName: options.firstName,
-          lastName: options.lastName,
-          population: options.population,
+          ...options,
         })
         .returning("*")
         .execute();

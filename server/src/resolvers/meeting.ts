@@ -51,58 +51,35 @@ export class MeetingResolver {
   ): Promise<PaginatedMeetings> {
     const realLimit = Math.min(20, limit);
     const realLimitPlusOne = realLimit + 1;
-    const query = getConnection()
-      .getRepository(Meeting)
-      .createQueryBuilder("m");
+    const replacements: any[] = [week, realLimitPlusOne];
 
-    if (isCoordinator) {
-      query.orderBy('"createdAt"', "DESC").take(realLimitPlusOne);
-
-      if (cursor) {
-        query.andWhere('"createdAt" < :cursor', {
-          cursor: new Date(parseInt(cursor)),
-        });
-      }
-
-      const meetings = await query.getMany();
+    if (!coachID) {
       return {
-        allMeetings: meetings.slice(0, realLimit),
-        hasMore: meetings.length === realLimitPlusOne,
+        allMeetings: [],
+        hasMore: false,
       };
+    } else if (!isCoordinator) {
+      replacements.push(coachID);
     }
-    if (coachID) {
-      query
-        .where('"coachID" = :coachID', {
-          coachID: coachID,
-        })
-        .orderBy('"createdAt"', "DESC") //What you want to order the list by
-        .take(realLimitPlusOne);
-
-      const test = await query.getMany();
-      if (test.length !== 0) {
-        query.andWhere("week = :week", {
-          week,
-        });
-
-        if (cursor) {
-          query.andWhere('"createdAt" < :cursor', {
-            //Based on ordering, thats what you will paginate
-            cursor: new Date(parseInt(cursor)),
-          });
-        }
-      }
-
-      const meetings = await query.getMany();
-      return {
-        allMeetings: meetings.slice(0, realLimit),
-        hasMore: meetings.length === realLimitPlusOne,
-      };
+    if (cursor) {
+      replacements.push(new Date(parseInt(cursor)));
     }
+    const meetings = await getConnection().query(
+      `
+        select m.*
+        from meeting m
+        where m."week" = $1
+        ${isCoordinator ? "" : `and  m."coachID" = $3`}
+        ${cursor ? `and m."createdAt" < $4` : ""}
+        order by m."createdAt" DESC
+        limit $2
+      `,
+      replacements
+    );
 
-    //nobody is asking but this query is being called anyway
     return {
-      allMeetings: [],
-      hasMore: false,
+      allMeetings: meetings.slice(0, realLimit),
+      hasMore: meetings.length === realLimitPlusOne,
     };
   }
 

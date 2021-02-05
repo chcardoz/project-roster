@@ -22,20 +22,6 @@ export class Outreach extends BaseEntity {
   @Column()
   type: string;
 
-  @Field(() => Int)
-  @Column()
-  coachID: number;
-
-  @ManyToOne(() => Coach, (coach) => coach.meetings)
-  coach: Coach;
-
-  @Field(() => Int)
-  @Column()
-  studentID: number;
-
-  @ManyToOne(() => Student, (student) => student.meetings)
-  student: Student;
-
   @Field(() => String)
   @Column()
   outreachDate: Date;
@@ -43,6 +29,24 @@ export class Outreach extends BaseEntity {
   @Field(() => Int)
   @Column()
   week: number;
+
+  /*
+    RELATIONSHIPS
+  */
+
+  @Field(() => Int)
+  @Column()
+  coachID: number;
+
+  @ManyToOne(() => Coach, (coach) => coach.outreach)
+  coach: Coach;
+
+  @Field(() => Int)
+  @Column()
+  studentID: number;
+
+  @ManyToOne(() => Student, (student) => student.outreach)
+  student: Student;
 
   @Field(() => String)
   @CreateDateColumn()

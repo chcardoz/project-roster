@@ -19,12 +19,20 @@ export class Meeting extends BaseEntity {
   id!: number;
 
   @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column()
+  meetingDate: Date;
 
-  @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Field(() => Int)
+  @Column()
+  duration: number;
+
+  @Field(() => Int)
+  @Column()
+  week: number;
+
+  /*
+    RELATIONSHIPS
+  */
 
   @Field(() => Int)
   @Column()
@@ -41,14 +49,10 @@ export class Meeting extends BaseEntity {
   student: Student;
 
   @Field(() => String)
-  @Column()
-  meetingDate: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @Field(() => Int)
-  @Column()
-  duration: number;
-
-  @Field(() => Int)
-  @Column()
-  week: number;
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date;
 }
