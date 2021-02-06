@@ -1,21 +1,35 @@
-import { ChakraProvider, Flex } from "@chakra-ui/react";
+import { ThemeProvider } from "@material-ui/core";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { withUrqlClient } from "next-urql";
 import { AppProps } from "next/app";
-import { Navbar } from "../components/navigation/Navbar";
+import { Head } from "next/document";
+import { useEffect } from "react";
 import theme from "../theme/index";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import Fonts from "../theme/Fonts";
 import "./date-picker.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    const jssStyles = document.querySelector("#jss-server-side");
+    if (jssStyles) {
+      jssStyles.parentElement.removeChild(jssStyles);
+    }
+  }, []);
+
   return (
-    <ChakraProvider resetCSS theme={theme}>
-      <Fonts />
-      <Flex direction="column" align="center" justify="center">
-        <Navbar />
+    <>
+      <Head>
+        <title>Roster management</title>
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
+      </Head>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Component {...pageProps} />
-      </Flex>
-    </ChakraProvider>
+      </ThemeProvider>
+    </>
   );
 }
 
