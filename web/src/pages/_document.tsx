@@ -1,9 +1,10 @@
 import { ServerStyleSheets } from "@material-ui/core";
-import NextDocument, { Head, Html, Main, NextScript } from "next/document";
+import Document, { Main, Html, NextScript } from "next/document";
+import { Head } from "next/document";
 import React from "react";
 import theme from "../theme";
 
-export default class Document extends NextDocument {
+export default class MyDocument extends Document {
   render() {
     return (
       <Html>
@@ -24,7 +25,9 @@ export default class Document extends NextDocument {
   }
 }
 
-Document.getInitialProps = async (ctx) => {
+// `getInitialProps` belongs to `_document` (instead of `_app`),
+// it's compatible with server-side generation (SSG).
+MyDocument.getInitialProps = async (ctx) => {
   const sheets = new ServerStyleSheets();
   const originalRenderPage = ctx.renderPage;
 
@@ -32,12 +35,17 @@ Document.getInitialProps = async (ctx) => {
     originalRenderPage({
       enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
     });
+
   const initialProps = await Document.getInitialProps(ctx);
+
   return {
     ...initialProps,
+    // Styles fragment is rendered after the app and page rendering finish.
     styles: [
-      ...React.Children.toArray(initialProps.styles),
-      sheets.getStyleElement(),
+      <React.Fragment key="styles">
+        {initialProps.styles}
+        {sheets.getStyleElement()}
+      </React.Fragment>,
     ],
   };
 };
