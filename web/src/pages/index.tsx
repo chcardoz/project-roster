@@ -1,7 +1,6 @@
-import { Heading } from "@chakra-ui/react";
+import { Paper, Typography } from "@material-ui/core";
 import { withUrqlClient } from "next-urql";
 import React from "react";
-import { Wrapper } from "../components/Wrapper";
 import { useMeQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { isServer } from "../utils/isServer";
@@ -12,15 +11,13 @@ const Index = () => {
   });
 
   return (
-    <>
-      <Wrapper>
-        {data?.currentCoach === null ? (
-          <Heading>PLEASE LOG IN</Heading>
-        ) : (
-          <Heading>HELLO THERE {data?.currentCoach?.firstName}</Heading>
-        )}
-      </Wrapper>
-    </>
+    <Paper>
+      {data?.currentCoach === null ? (
+        <Typography>Please log in </Typography>
+      ) : (
+        <Typography>Hello there coach</Typography>
+      )}
+    </Paper>
   );
 };
 

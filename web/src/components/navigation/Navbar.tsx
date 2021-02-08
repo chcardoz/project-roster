@@ -16,6 +16,8 @@ import clsx from "clsx";
 import React from "react";
 import { useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
+import { Login } from "../dialogs/Login";
+import { Register } from "../dialogs/Register";
 import { CoachList } from "./CoachList";
 import { CoordinatorList } from "./CoordinatorList";
 
@@ -77,8 +79,11 @@ const useStyles = makeStyles((theme: Theme) =>
       ...theme.mixins.toolbar,
     },
     content: {
-      flexGrow: 1,
+      alignItems: "center",
+      margin: "0 auto",
+      flexGrow: 0.5,
       padding: theme.spacing(3),
+      flexShrink: 0,
     },
     title: {
       flexGrow: 1,
@@ -93,6 +98,24 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [loginOpen, setLoginOpen] = React.useState(false);
+  const [registerOpen, setRegisterOpen] = React.useState(false);
+
+  const handleLoginOpen = () => {
+    setLoginOpen(true);
+  };
+
+  const handleLoginClose = () => {
+    setLoginOpen(false);
+  };
+
+  const handleRegisterOpen = () => {
+    setRegisterOpen(true);
+  };
+
+  const handleRegisterClose = () => {
+    setRegisterOpen(false);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -107,8 +130,14 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   if (!data?.currentCoach) {
     body = (
       <>
-        <Button color="inherit">Login</Button>
-        <Button color="inherit">Register</Button>
+        <Button onClick={handleLoginOpen} color="inherit">
+          Login
+        </Button>
+        <Button onClick={handleRegisterOpen} color="inherit">
+          Register
+        </Button>
+        <Login open={loginOpen} handleClose={handleLoginClose} />
+        <Register open={registerOpen} handleClose={handleRegisterClose} />
       </>
     );
     list = <CoachList />;
@@ -168,7 +197,8 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
         {list}
       </Drawer>
       <main className={classes.content}>
-        <div className={classes.toolbar}>{children}</div>
+        <div className={classes.toolbar} />
+        {children}
       </main>
     </>
   );
