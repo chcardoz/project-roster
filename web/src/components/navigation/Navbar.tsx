@@ -1,30 +1,23 @@
 import {
   AppBar,
-  Toolbar,
-  Typography,
-  ListItemIcon,
-  ListItemText,
-  useTheme,
-  IconButton,
-  Drawer,
-  Divider,
-  List,
-  ListItem,
+  Button,
   createStyles,
+  Divider,
+  Drawer,
+  IconButton,
   makeStyles,
   Theme,
+  Toolbar,
+  Typography,
+  useTheme,
 } from "@material-ui/core";
-import {
-  Mail,
-  Menu,
-  ChevronLeft,
-  ChevronRight,
-  MoveToInbox,
-} from "@material-ui/icons";
+import { ChevronLeft, ChevronRight, Menu } from "@material-ui/icons";
+import clsx from "clsx";
 import React from "react";
 import { useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
-import clsx from "clsx";
+import { CoachList } from "./CoachList";
+import { CoordinatorList } from "./CoordinatorList";
 
 interface NavBarProps {}
 
@@ -87,10 +80,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
+    title: {
+      flexGrow: 1,
+    },
   })
 );
 
-export const Navbar: React.FC<NavBarProps> = () => {
+export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),
   });
@@ -107,9 +103,21 @@ export const Navbar: React.FC<NavBarProps> = () => {
   };
 
   let body = null;
-  let links = null;
+  let list = null;
   if (!data?.currentCoach) {
+    body = (
+      <>
+        <Button color="inherit">Login</Button>
+        <Button color="inherit">Register</Button>
+      </>
+    );
+    list = <CoachList />;
   } else {
+    if (data?.currentCoach.isCoordinator) {
+      list = <CoordinatorList />;
+    } else {
+      list = <CoachList />;
+    }
   }
 
   return (
@@ -132,9 +140,10 @@ export const Navbar: React.FC<NavBarProps> = () => {
           >
             <Menu />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Mini variant drawer
+          <Typography variant="h6" className={classes.title} noWrap>
+            Roster management
           </Typography>
+          {body}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -156,28 +165,11 @@ export const Navbar: React.FC<NavBarProps> = () => {
           </IconButton>
         </div>
         <Divider />
-        <List>
-          {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <MoveToInbox /> : <Mail />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <MoveToInbox /> : <Mail />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
+        {list}
       </Drawer>
+      <main className={classes.content}>
+        <div className={classes.toolbar}>{children}</div>
+      </main>
     </>
   );
 };

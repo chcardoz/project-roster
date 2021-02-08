@@ -39,8 +39,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={theme}>
         <div className={classes.root}>
           <CssBaseline />
-          <Navbar />
-          <Component {...pageProps} />
+          <Navbar>
+            <Component {...pageProps} />
+          </Navbar>
         </div>
       </ThemeProvider>
     </>
