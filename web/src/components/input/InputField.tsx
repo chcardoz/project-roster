@@ -10,11 +10,19 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 // '' => false
 // 'error message stuff' => true
 
-export const InputField: React.FC<InputFieldProps> = ({ ...props }) => {
+export const InputField: React.FC<InputFieldProps> = ({ label, ...props }) => {
   const [field, { error }] = useField(props);
   return (
     <FormControl>
-      <TextField {...field} id="outlined-basic" variant="outlined" />
+      <TextField
+        {...field}
+        label={label}
+        name={props.name}
+        id="outlined-basic"
+        error={error ? true : false}
+        variant="outlined"
+        type={props.type}
+      />
       {error ? <FormHelperText>{error}</FormHelperText> : null}
     </FormControl>
   );
