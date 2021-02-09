@@ -18,7 +18,7 @@ export const InputField: React.FC<InputFieldProps> = ({ label, ...props }) => {
         {...field}
         label={label}
         name={props.name}
-        id="outlined-basic"
+        id={label}
         error={error ? true : false}
         variant="outlined"
         type={props.type}

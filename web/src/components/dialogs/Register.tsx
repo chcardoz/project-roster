@@ -20,8 +20,10 @@ interface RegisterProps {
 
 const useStyles = makeStyles(() =>
   createStyles({
-    input: {
-      paddingTop: 20,
+    container: {
+      display: "flex",
+      flexDirection: "column",
+      flexGrow: 1,
     },
   })
 );
@@ -34,51 +36,37 @@ export const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
+      fullWidth
+      maxWidth="xs"
     >
       <DialogTitle id="alert-dialog-title">{"REGISTER"}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          <Formik
-            initialValues={{ username: "", password: "" }}
-            onSubmit={async (values, { setErrors }) => {
-              setErrors({
-                username: "This is a error",
-              });
-              console.log(values);
-              handleClose();
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
+        <Formik
+          initialValues={{ username: "", password: "" }}
+          onSubmit={async (values, { setErrors }) => {
+            setErrors({
+              username: "This is a error",
+            });
+            console.log(values);
+            handleClose();
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div className={classes.container}>
+                <InputField label="First Name" name="username" />
+                <br />
+                <InputField label="Last Name" name="lastName" />
+                <br />
                 <InputField label="Username" name="username" />
-                <Box>
-                  <InputField
-                    type="password"
-                    label="Password"
-                    name="password"
-                  />
-                </Box>
-                <Box className={classes.input}>
-                  <InputField
-                    type="password"
-                    label="Password"
-                    name="password"
-                  />
-                </Box>
-                <Box className={classes.input}>
-                  <InputField
-                    type="password"
-                    label="Password"
-                    name="password"
-                  />
-                </Box>
-                <Box className={classes.input}>
-                  <InputField
-                    type="password"
-                    label="Password"
-                    name="password"
-                  />
-                </Box>
+
+                <br />
+                <InputField type="password" label="Password" name="password" />
+
+                <br />
+                <InputField label="Email" name="email" />
+
+                <br />
                 <Button
                   variant="contained"
                   disabled={isSubmitting}
@@ -87,10 +75,10 @@ export const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
                 >
                   create account
                 </Button>
-              </Form>
-            )}
-          </Formik>
-        </DialogContentText>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
       <DialogActions></DialogActions>
     </Dialog>

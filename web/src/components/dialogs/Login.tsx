@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Link,
   makeStyles,
@@ -38,42 +37,41 @@ export const Login: React.FC<LoginProps> = ({ open, handleClose }) => {
     >
       <DialogTitle id="alert-dialog-title">{"LOGIN"}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          <Formik
-            initialValues={{ username: "", password: "" }}
-            onSubmit={async (values, { setErrors }) => {
-              setErrors({
-                username: "This is a error",
-              });
-              console.log(values);
-              handleClose();
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <InputField label="Username" name="username" />
-                <Box className={classes.input}>
-                  <InputField
-                    type="password"
-                    label="Password"
-                    name="password"
-                  />
-                </Box>
-                <Box className={classes.input}>
-                  <Link>forgot password?</Link>
-                </Box>
-                <Button
-                  variant="contained"
-                  disabled={isSubmitting}
-                  type="submit"
-                  color="primary"
-                >
-                  LOGIN
-                </Button>
-              </Form>
-            )}
-          </Formik>
-        </DialogContentText>
+        <Formik
+          initialValues={{ username: "", password: "" }}
+          onSubmit={async (values, { setErrors }) => {
+            setErrors({
+              username: "This is a error",
+            });
+            console.log(values);
+            handleClose();
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <InputField fullWidth label="Username" name="username" />
+              <Box className={classes.input}>
+                <InputField
+                  fullWidth
+                  type="password"
+                  label="Password"
+                  name="password"
+                />
+              </Box>
+              <Box className={classes.input}>
+                <Link>forgot password?</Link>
+              </Box>
+              <Button
+                variant="contained"
+                disabled={isSubmitting}
+                type="submit"
+                color="primary"
+              >
+                LOGIN
+              </Button>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
       <DialogActions></DialogActions>
     </Dialog>
