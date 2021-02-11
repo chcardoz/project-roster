@@ -6,18 +6,25 @@ import {
   Drawer,
   IconButton,
   makeStyles,
+  MenuItem,
   Theme,
   Toolbar,
   Typography,
   useTheme,
+  Menu,
 } from "@material-ui/core";
-import { ChevronLeft, ChevronRight, Menu } from "@material-ui/icons";
+import {
+  AccountCircle,
+  ChevronLeft,
+  ChevronRight,
+  Menu as MenuIcon,
+} from "@material-ui/icons";
 import clsx from "clsx";
 import React from "react";
 import { useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
-import { Login } from "../dialogs/Login";
-import { Register } from "../dialogs/Register";
+import Login from "../dialogs/Login";
+import Register from "../dialogs/Register";
 import { CoachList } from "./CoachList";
 import { CoordinatorList } from "./CoordinatorList";
 
@@ -100,6 +107,8 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   const [open, setOpen] = React.useState(false);
   const [loginOpen, setLoginOpen] = React.useState(false);
   const [registerOpen, setRegisterOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const MenuOpen = Boolean(anchorEl);
 
   const handleLoginOpen = () => {
     setLoginOpen(true);
@@ -125,6 +134,14 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
     setOpen(false);
   };
 
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   let body = null;
   let list = null;
   if (!data?.currentCoach) {
@@ -142,6 +159,36 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
     );
     list = <CoachList />;
   } else {
+    body = (
+      <div>
+        <IconButton
+          aria-label="account of current user"
+          aria-haspopup="true"
+          aria-controls="menu-appbar"
+          onClick={handleMenuOpen}
+        >
+          <AccountCircle />
+        </IconButton>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={MenuOpen}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+        </Menu>
+      </div>
+    );
     if (data?.currentCoach.isCoordinator) {
       list = <CoordinatorList />;
     } else {
@@ -167,7 +214,7 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
               [classes.hide]: open,
             })}
           >
-            <Menu />
+            <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title} noWrap>
             Roster management

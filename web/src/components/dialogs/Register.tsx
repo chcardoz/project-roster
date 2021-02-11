@@ -1,16 +1,18 @@
 import {
-  Box,
   Button,
   createStyles,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   makeStyles,
 } from "@material-ui/core";
 import { Formik, Form } from "formik";
+import { withUrqlClient } from "next-urql";
 import React from "react";
+import { useRegisterMutation } from "../../generated/graphql";
+import { createUrqlClient } from "../../utils/createUrqlClient";
+import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../input/InputField";
 
 interface RegisterProps {
@@ -28,8 +30,9 @@ const useStyles = makeStyles(() =>
   })
 );
 
-export const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
+const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
   const classes = useStyles();
+  const [, register] = useRegisterMutation();
   return (
     <Dialog
       open={open}
@@ -42,19 +45,35 @@ export const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
       <DialogTitle id="alert-dialog-title">{"REGISTER"}</DialogTitle>
       <DialogContent>
         <Formik
-          initialValues={{ username: "", password: "" }}
+          initialValues={{
+            username: "",
+            password: "",
+            firstName: "",
+            lastName: "",
+            email: "",
+          }}
           onSubmit={async (values, { setErrors }) => {
-            setErrors({
-              username: "This is a error",
-            });
-            console.log(values);
-            handleClose();
+            const { data, error } = await register({ options: values });
+            if (error) {
+              //TODO: Toast or alert the combined error from the server
+            } else if (data?.registerCoach.errors) {
+              setErrors(toErrorMap(data?.registerCoach.errors));
+            } else if (data?.registerCoach.coach != null) {
+              handleClose();
+              // toast({
+              //   title: "Account created.",
+              //   description: "We've created your account for you.",
+              //   status: "success",
+              //   duration: 9000,
+              //   isClosable: true,
+              // });
+            }
           }}
         >
           {({ isSubmitting }) => (
             <Form>
               <div className={classes.container}>
-                <InputField label="First Name" name="username" />
+                <InputField label="First Name" name="firstName" />
                 <br />
                 <InputField label="Last Name" name="lastName" />
                 <br />
@@ -84,3 +103,5 @@ export const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
     </Dialog>
   );
 };
+
+export default withUrqlClient(createUrqlClient)(Register);
