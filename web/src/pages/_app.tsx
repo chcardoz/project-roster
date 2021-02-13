@@ -7,7 +7,6 @@ import React, { useEffect } from "react";
 import { Navbar } from "../components/navigation/Navbar";
 import theme from "../theme/index";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import "./date-picker.css";
 
 const useStyles = makeStyles(() =>
   createStyles({

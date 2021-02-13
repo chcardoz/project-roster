@@ -1,6 +1,7 @@
 import { Paper, Typography } from "@material-ui/core";
 import { withUrqlClient } from "next-urql";
 import React from "react";
+import { PopulationTabs } from "../components/tabs/PopulationTabs";
 import { useMeQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { isServer } from "../utils/isServer";
@@ -12,11 +13,7 @@ const Index = () => {
 
   return (
     <Paper>
-      {data?.currentCoach === null ? (
-        <Typography>Please log in </Typography>
-      ) : (
-        <Typography>Hello there coach</Typography>
-      )}
+      {data?.currentCoach === null ? <PopulationTabs /> : <PopulationTabs />}
     </Paper>
   );
 };

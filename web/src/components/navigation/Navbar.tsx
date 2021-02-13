@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) =>
     content: {
       alignItems: "center",
       margin: "0 auto",
-      flexGrow: 0.5,
+      // flexGrow: 0.5,
       padding: theme.spacing(3),
       flexShrink: 0,
     },
