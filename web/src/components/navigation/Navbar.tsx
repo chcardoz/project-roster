@@ -24,6 +24,7 @@ import React from "react";
 import { useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 import Login from "../dialogs/Login";
+import RecordMeeting from "../dialogs/RecordMeeting";
 import Register from "../dialogs/Register";
 import { CoachList } from "./CoachList";
 import { CoordinatorList } from "./CoordinatorList";
@@ -154,7 +155,8 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
           Register
         </Button>
         <Login open={loginOpen} handleClose={handleLoginClose} />
-        <Register open={registerOpen} handleClose={handleRegisterClose} />
+        {/* <Register open={registerOpen} handleClose={handleRegisterClose} /> */}
+        <RecordMeeting open={registerOpen} handleClose={handleRegisterClose} />
       </>
     );
     list = <CoachList />;
