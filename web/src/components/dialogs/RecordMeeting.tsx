@@ -5,18 +5,20 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Link,
   makeStyles,
 } from "@material-ui/core";
 import { Form, Formik } from "formik";
 import React from "react";
 import { InputField } from "../input/InputField";
-import NextLink from "next/link";
 import { toErrorMap } from "../../utils/toErrorMap";
-import { useLoginMutation } from "../../generated/graphql";
+import {
+  useCreateMeetingMutation,
+  useLoginMutation,
+} from "../../generated/graphql";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import DateFnsUtils from "@date-io/date-fns";
+import "date-fns";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -42,6 +44,7 @@ const useStyles = makeStyles(() =>
 
 const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
   const [, login] = useLoginMutation();
+  const [, recordMeeting] = useCreateMeetingMutation();
   const [selectedDate, setSelectedDate] = React.useState<Date | null>(
     new Date()
   );
@@ -59,20 +62,29 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
       fullWidth
       maxWidth="xs"
     >
-      <DialogTitle id="alert-dialog-title">{"LOGIN"}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{"RECORD MEETING"}</DialogTitle>
       <DialogContent>
         <Formik
-          initialValues={{ username: "", password: "" }}
-          onSubmit={async (values, { setErrors }) => {
-            const { data, error: serverError } = await login(values);
-            if (serverError) {
-              //TODO: A toast or alert for the server error.
-            }
-            /*    ERRORS FROM FORM VALIDATION     */
-            if (data?.loginCoach.errors) {
-              setErrors(toErrorMap(data.loginCoach.errors));
-              /*    NO ERRORS!   */
-            } else if (data?.loginCoach.coach) {
+          initialValues={{
+            studentID: "",
+            meetingDate: "",
+            duration: "",
+          }}
+          onSubmit={async ({ duration, meetingDate }, { setErrors }) => {
+            const { data, error } = await recordMeeting({
+              options: {
+                duration: parseInt(duration),
+                studentID: 0,
+                meetingDate: meetingDate,
+              },
+            });
+            /*    ERRORS BEFORE RUNNING THE RESOLVERS     */
+            if (error) {
+              /*    ERRORS FROM FORM VALIDATION     */
+            } else if (data?.createMeeting.errors) {
+              setErrors(toErrorMap(data?.createMeeting.errors));
+              /*    NO FORM OR RESOLVER ERRORS, SO LETS GOO!!    */
+            } else if (data?.createMeeting?.meeting) {
               handleClose();
             }
           }}
@@ -82,11 +94,10 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
               <div className={classes.container}>
                 <InputField label="Student" name="studentID" />
                 <br />
-                <InputField type="password" label="Password" name="password" />
-                <br />
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     disableToolbar
+                    inputVariant="outlined"
                     variant="inline"
                     format="MM/dd/yyyy"
                     margin="normal"
@@ -99,9 +110,11 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
                     }}
                   />
                 </MuiPickersUtilsProvider>
-                <NextLink href="/forgot-password">
-                  <Link>forgot password?</Link>
-                </NextLink>
+                <br />
+                <InputField
+                  label="Meeting Duration (minutes)"
+                  name="duration"
+                />
                 <br />
                 <Button
                   variant="contained"
@@ -109,7 +122,7 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
                   type="submit"
                   color="primary"
                 >
-                  LOGIN
+                  RECORD MEETING
                 </Button>
               </div>
             </Form>

@@ -1,20 +1,14 @@
 import {
   AppBar,
   Button,
-  createStyles,
   Divider,
   Drawer,
   IconButton,
-  makeStyles,
-  MenuItem,
-  Theme,
   Toolbar,
   Typography,
   useTheme,
-  Menu,
 } from "@material-ui/core";
 import {
-  AccountCircle,
   ChevronLeft,
   ChevronRight,
   Menu as MenuIcon,
@@ -25,79 +19,12 @@ import { useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 import Login from "../dialogs/Login";
 import RecordMeeting from "../dialogs/RecordMeeting";
-import Register from "../dialogs/Register";
+import { UserSettings } from "./UserSettings";
 import { CoachList } from "./CoachList";
 import { CoordinatorList } from "./CoordinatorList";
+import { useStyles } from "../../styles/navbar";
 
 interface NavBarProps {}
-
-const drawerWidth = 240;
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    appBar: {
-      zIndex: theme.zIndex.drawer + 1,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-    },
-    appBarShift: {
-      marginLeft: drawerWidth,
-      width: `calc(100% - ${drawerWidth}px)`,
-      transition: theme.transitions.create(["width", "margin"], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    menuButton: {
-      marginRight: 36,
-    },
-    hide: {
-      display: "none",
-    },
-    drawer: {
-      width: drawerWidth,
-      flexShrink: 0,
-      whiteSpace: "nowrap",
-    },
-    drawerOpen: {
-      width: drawerWidth,
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-    drawerClose: {
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      overflowX: "hidden",
-      width: theme.spacing(7) + 1,
-      [theme.breakpoints.up("sm")]: {
-        width: theme.spacing(9) + 1,
-      },
-    },
-    toolbar: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "flex-end",
-      padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
-      ...theme.mixins.toolbar,
-    },
-    content: {
-      alignItems: "center",
-      margin: "0 auto",
-      // flexGrow: 0.5,
-      padding: theme.spacing(3),
-      flexShrink: 0,
-    },
-    title: {
-      flexGrow: 1,
-    },
-  })
-);
 
 export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   const [{ data, fetching }] = useMeQuery({
@@ -108,8 +35,6 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   const [open, setOpen] = React.useState(false);
   const [loginOpen, setLoginOpen] = React.useState(false);
   const [registerOpen, setRegisterOpen] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const MenuOpen = Boolean(anchorEl);
 
   const handleLoginOpen = () => {
     setLoginOpen(true);
@@ -135,14 +60,6 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
     setOpen(false);
   };
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   let body = null;
   let list = null;
   if (!data?.currentCoach) {
@@ -161,36 +78,7 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
     );
     list = <CoachList />;
   } else {
-    body = (
-      <div>
-        <IconButton
-          aria-label="account of current user"
-          aria-haspopup="true"
-          aria-controls="menu-appbar"
-          onClick={handleMenuOpen}
-        >
-          <AccountCircle />
-        </IconButton>
-        <Menu
-          id="menu-appbar"
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          open={MenuOpen}
-          onClose={handleMenuClose}
-        >
-          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-          <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-        </Menu>
-      </div>
-    );
+    body = <UserSettings />;
     if (data?.currentCoach.isCoordinator) {
       list = <CoordinatorList />;
     } else {

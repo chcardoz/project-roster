@@ -47,7 +47,9 @@ export const PopulationTabs: React.FC<PopulationTabsProps> = ({}) => {
           aria-label="full width tabs example"
         >
           {populations.map((p) => {
-            return <Tab label={p} {...a11yProps(populations.indexOf(p))} />;
+            return (
+              <Tab key={p} label={p} {...a11yProps(populations.indexOf(p))} />
+            );
           })}
         </Tabs>
       </AppBar>
