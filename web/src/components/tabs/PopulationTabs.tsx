@@ -61,6 +61,7 @@ export const PopulationTabs: React.FC<PopulationTabsProps> = ({}) => {
         {populations.map((p) => {
           return (
             <TabPanel
+              key={p}
               value={value}
               index={populations.indexOf(p)}
               dir={theme.direction}

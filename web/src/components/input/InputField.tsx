@@ -20,8 +20,8 @@ export const InputField: React.FC<InputFieldProps> = ({ label, ...props }) => {
         name={props.name}
         id={label}
         error={error ? true : false}
-        variant="outlined"
         type={props.type}
+        variant="outlined"
       />
       {error ? <FormHelperText>{error}</FormHelperText> : null}
     </FormControl>

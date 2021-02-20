@@ -2,34 +2,36 @@ import React, { SelectHTMLAttributes } from "react";
 import { useField } from "formik";
 import {
   FormControl,
-  FormLabel,
-  FormErrorMessage,
+  FormHelperText,
+  InputLabel,
   Select,
-} from "@chakra-ui/react";
+} from "@material-ui/core";
 
 type SelectFieldProps = SelectHTMLAttributes<HTMLInputElement> & {
   label: string;
   name: string;
 };
 
-// '' => false
-// 'error message stuff' => true
-
 export const SelectField: React.FC<SelectFieldProps> = ({
-  placeholder,
-  children,
   label,
-  size: _,
+  children,
   ...props
 }) => {
   const [field, { error }] = useField(props);
   return (
-    <FormControl isInvalid={!!error}>
-      <FormLabel htmlFor={field.name}>{label}</FormLabel>
-      <Select {...field} placeholder={placeholder} id={field.name}>
+    <FormControl variant="outlined">
+      <InputLabel id="demo-simple-select-outlined-label">{label}</InputLabel>
+      <Select
+        variant="outlined"
+        labelId="demo-simple-select-outlined-label"
+        id="demo-simple-select-outlined"
+        name={props.name}
+        label={label}
+        {...field}
+      >
         {children}
       </Select>
-      {error ? <FormErrorMessage>{error}</FormErrorMessage> : null}
+      {error ? <FormHelperText>{error}</FormHelperText> : null}
     </FormControl>
   );
 };

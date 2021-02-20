@@ -11,10 +11,7 @@ import { Form, Formik } from "formik";
 import React from "react";
 import { InputField } from "../input/InputField";
 import { toErrorMap } from "../../utils/toErrorMap";
-import {
-  useCreateMeetingMutation,
-  useLoginMutation,
-} from "../../generated/graphql";
+import { useCreateMeetingMutation } from "../../generated/graphql";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import DateFnsUtils from "@date-io/date-fns";
@@ -43,15 +40,13 @@ const useStyles = makeStyles(() =>
 );
 
 const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
-  const [, login] = useLoginMutation();
   const [, recordMeeting] = useCreateMeetingMutation();
-  const [selectedDate, setSelectedDate] = React.useState<Date | null>(
-    new Date()
-  );
+  const [meetingDate, setMeetingDate] = React.useState<Date | null>(new Date());
 
   const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
+    setMeetingDate(date);
   };
+
   const classes = useStyles();
   return (
     <Dialog
@@ -67,15 +62,14 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
         <Formik
           initialValues={{
             studentID: "",
-            meetingDate: "",
             duration: "",
           }}
-          onSubmit={async ({ duration, meetingDate }, { setErrors }) => {
+          onSubmit={async ({ duration }, { setErrors }) => {
             const { data, error } = await recordMeeting({
               options: {
                 duration: parseInt(duration),
                 studentID: 0,
-                meetingDate: meetingDate,
+                meetingDate: meetingDate.toISOString(),
               },
             });
             /*    ERRORS BEFORE RUNNING THE RESOLVERS     */
@@ -102,8 +96,8 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
                     format="MM/dd/yyyy"
                     margin="normal"
                     id="date-picker-inline"
-                    label="Date picker inline"
-                    value={selectedDate}
+                    label="Meeting date"
+                    value={meetingDate}
                     onChange={handleDateChange}
                     KeyboardButtonProps={{
                       "aria-label": "change date",

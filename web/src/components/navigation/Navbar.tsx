@@ -23,6 +23,7 @@ import { UserSettings } from "./UserSettings";
 import { CoachList } from "./CoachList";
 import { CoordinatorList } from "./CoordinatorList";
 import { useStyles } from "../../styles/navbar";
+import RecordOutreach from "../dialogs/RecordOutreach";
 
 interface NavBarProps {}
 
@@ -73,7 +74,7 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
         </Button>
         <Login open={loginOpen} handleClose={handleLoginClose} />
         {/* <Register open={registerOpen} handleClose={handleRegisterClose} /> */}
-        <RecordMeeting open={registerOpen} handleClose={handleRegisterClose} />
+        <RecordOutreach open={registerOpen} handleClose={handleRegisterClose} />
       </>
     );
     list = <CoachList />;
