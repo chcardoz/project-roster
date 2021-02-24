@@ -15,6 +15,7 @@ import { useCreateStudentMutation } from "../../generated/graphql";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { SelectField } from "../input/SelectField";
+import { toErrorMap } from "../../utils/toErrorMap";
 
 interface CreateStudentProps {
   open: boolean;
@@ -57,22 +58,18 @@ const CreateStudent: React.FC<CreateStudentProps> = ({ open, handleClose }) => {
             population: "",
           }}
           onSubmit={async (values, { setErrors }) => {
-            //     const { data, error } = await recordMeeting({
-            //       options: {
-            //         duration: parseInt(duration),
-            //         studentID: 0,
-            //         meetingDate: meetingDate.toISOString(),
-            //       },
-            //     });
-            //     /*    ERRORS BEFORE RUNNING THE RESOLVERS     */
-            //     if (error) {
-            //       /*    ERRORS FROM FORM VALIDATION     */
-            //     } else if (data?.createMeeting.errors) {
-            //       setErrors(toErrorMap(data?.createMeeting.errors));
-            //       /*    NO FORM OR RESOLVER ERRORS, SO LETS GOO!!    */
-            //     } else if (data?.createMeeting?.meeting) {
-            //       handleClose();
-            //     }
+            const { data, error } = await createStudent({
+              options: values,
+            });
+            /*    ERRORS BEFORE RUNNING THE RESOLVERS     */
+            if (error) {
+              /*    ERRORS FROM FORM VALIDATION     */
+            } else if (data?.createStudent.errors) {
+              setErrors(toErrorMap(data?.createStudent.errors));
+              /*    NO FORM OR RESOLVER ERRORS, SO LETS GOO!!    */
+            } else if (data?.createStudent?.student) {
+              handleClose();
+            }
           }}
         >
           {({ isSubmitting }) => (
@@ -85,12 +82,10 @@ const CreateStudent: React.FC<CreateStudentProps> = ({ open, handleClose }) => {
                 <InputField label="Email" name="email" />
                 <br />
                 <SelectField label="Population" name="population">
-                  <MenuItem value={``}>
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value="email">Email</MenuItem>
-                  <MenuItem value="groupme">GroupMe</MenuItem>
-                  <MenuItem value="whatsapp">Whatsapp</MenuItem>
+                  <MenuItem value="star-probation">STAR Probation</MenuItem>
+                  <MenuItem value="star-reinstated">STAR Reinstated</MenuItem>
+                  <MenuItem value="span">SPAN</MenuItem>
+                  <MenuItem value="veteran">Veteran</MenuItem>
                 </SelectField>
                 <br />
                 <Button

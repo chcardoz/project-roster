@@ -1,6 +1,7 @@
 import { Paper, Typography } from "@material-ui/core";
 import { withUrqlClient } from "next-urql";
 import React from "react";
+import DataGridDemo from "../components/tables/DataGrid";
 import { PopulationTabs } from "../components/tabs/PopulationTabs";
 import { useMeQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
@@ -12,9 +13,14 @@ const Index = () => {
   });
 
   return (
-    <Paper>
-      {data?.currentCoach === null ? <PopulationTabs /> : <PopulationTabs />}
-    </Paper>
+    <>
+      <Paper>
+        {data?.currentCoach === null ? <PopulationTabs /> : <PopulationTabs />}
+      </Paper>
+      <Paper>
+        <DataGridDemo week={4} />
+      </Paper>
+    </>
   );
 };
 
