@@ -1,6 +1,5 @@
-query AllOutreach($options: PaginationInput!, $week: Float!) {
-  allOutreach(week: $week, options: $options) {
-    hasMore
+query AllOutreach($options: PaginationInput!) {
+  allOutreach(options: $options) {
     allOutreach {
       ...BasicOutreach
     }

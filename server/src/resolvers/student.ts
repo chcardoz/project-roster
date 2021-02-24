@@ -27,8 +27,6 @@ class StudentFieldError {
 class PaginatedStudents {
   @Field(() => [Student])
   allStudents: Student[];
-  @Field()
-  hasMore: boolean;
 }
 
 @ObjectType()
@@ -44,42 +42,29 @@ class StudentResponse {
 export class StudentResolver {
   @Query(() => PaginatedStudents)
   async allStudents(
-    @Arg("population") population: string,
     @Arg("options") options: PaginationInput
   ): Promise<PaginatedStudents> {
-    const realLimit = Math.min(20, options.limit);
-    const realLimitPlusOne = realLimit + 1;
-    const replacements: any[] = [population, realLimitPlusOne];
+    const replacements: any[] = [];
 
     if (!options.coachID) {
       return {
         allStudents: [],
-        hasMore: false,
       };
     } else if (!options.isCoordinator) {
       replacements.push(options.coachID);
-    }
-
-    if (options.cursor) {
-      replacements.push(new Date(parseInt(options.cursor)));
     }
 
     const students = await getConnection().query(
       `
         select s.*
         from student s
-        where s."population" = $1
-        ${options.isCoordinator ? "" : `and  s."assignedCoachID" = $3`}
-        ${options.cursor ? `and s."createdAt" < $4` : ""}
-        order by s."createdAt" DESC
-        limit $2
+        ${options.isCoordinator ? "" : `where  s."assignedCoachID" = $1`}
       `,
       replacements
     );
 
     return {
-      allStudents: students.slice(0, realLimit),
-      hasMore: students.length === realLimitPlusOne,
+      allStudents: students,
     };
   }
 

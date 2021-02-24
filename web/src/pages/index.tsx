@@ -18,7 +18,7 @@ const Index = () => {
         {data?.currentCoach === null ? <PopulationTabs /> : <PopulationTabs />}
       </Paper>
       <Paper>
-        <DataGridDemo week={4} />
+        <DataGridDemo />
       </Paper>
     </>
   );

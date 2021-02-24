@@ -38,50 +38,35 @@ class OutreachResponse {
 class PaginatedOutreach {
   @Field(() => [Outreach])
   allOutreach: Outreach[];
-  @Field()
-  hasMore: boolean;
 }
 
 @Resolver(Outreach)
 export class OutreachResolver {
   @Query(() => PaginatedOutreach)
   async allOutreach(
-    @Arg("week") week: number,
-    @Arg("options") { limit, cursor, coachID, isCoordinator }: PaginationInput
+    @Arg("options") { coachID, isCoordinator }: PaginationInput
   ): Promise<PaginatedOutreach> {
-    const realLimit = Math.min(20, limit);
-    const realLimitPlusOne = realLimit + 1;
-    const replacements: any[] = [week, realLimitPlusOne];
+    const replacements: any[] = [];
 
     if (!coachID) {
       return {
         allOutreach: [],
-        hasMore: false,
       };
     } else if (!isCoordinator) {
       replacements.push(coachID);
-    }
-
-    if (cursor) {
-      replacements.push(new Date(parseInt(cursor)));
     }
 
     const outreach = await getConnection().query(
       `
         select o.*
         from outreach o
-        where o."week" = $1
-        ${isCoordinator ? "" : `and  o."coachID" = $3`}
-        ${cursor ? `and o."createdAt" < $4` : ""}
-        order by o."createdAt" DESC
-        limit $2
+        ${isCoordinator ? "" : `where  o."coachID" = $1`}
       `,
       replacements
     );
 
     return {
-      allOutreach: outreach.slice(0, realLimit),
-      hasMore: outreach.length === realLimitPlusOne,
+      allOutreach: outreach,
     };
   }
 

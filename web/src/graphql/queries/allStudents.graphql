@@ -1,6 +1,5 @@
-query AllStudents($population: String!, $options: PaginationInput!) {
-  allStudents(population: $population, options: $options) {
-    hasMore
+query AllStudents($options: PaginationInput!) {
+  allStudents(options: $options) {
     allStudents {
       ...BasicStudent
     }

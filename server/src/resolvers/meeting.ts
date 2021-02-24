@@ -38,48 +38,35 @@ class MeetingResponse {
 class PaginatedMeetings {
   @Field(() => [Meeting])
   allMeetings: Meeting[];
-  @Field()
-  hasMore: boolean;
 }
 
 @Resolver(Meeting)
 export class MeetingResolver {
   @Query(() => PaginatedMeetings)
   async allMeetings(
-    @Arg("week") week: number,
-    @Arg("options") { limit, cursor, isCoordinator, coachID }: PaginationInput
+    @Arg("options") { isCoordinator, coachID }: PaginationInput
   ): Promise<PaginatedMeetings> {
-    const realLimit = Math.min(20, limit);
-    const realLimitPlusOne = realLimit + 1;
-    const replacements: any[] = [week, realLimitPlusOne];
+    const replacements: any[] = [];
 
     if (!coachID) {
       return {
         allMeetings: [],
-        hasMore: false,
       };
     } else if (!isCoordinator) {
       replacements.push(coachID);
     }
-    if (cursor) {
-      replacements.push(new Date(parseInt(cursor)));
-    }
+
     const meetings = await getConnection().query(
       `
         select m.*
         from meeting m
-        where m."week" = $1
-        ${isCoordinator ? "" : `and  m."coachID" = $3`}
-        ${cursor ? `and m."createdAt" < $4` : ""}
-        order by m."createdAt" DESC
-        limit $2
+        ${isCoordinator ? "" : `where m."coachID" = $1`}
       `,
       replacements
     );
 
     return {
-      allMeetings: meetings.slice(0, realLimit),
-      hasMore: meetings.length === realLimitPlusOne,
+      allMeetings: meetings,
     };
   }
 

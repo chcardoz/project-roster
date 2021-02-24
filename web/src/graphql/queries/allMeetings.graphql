@@ -1,6 +1,5 @@
-query AllMeetings($options: PaginationInput!, $week: Float!) {
-  allMeetings(week: $week, options: $options) {
-    hasMore
+query AllMeetings($options: PaginationInput!) {
+  allMeetings(options: $options) {
     allMeetings {
       ...BasicMeeting
     }
