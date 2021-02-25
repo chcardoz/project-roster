@@ -60,7 +60,8 @@ export const useStyles = makeStyles((theme: Theme) =>
       margin: "0 auto",
       // flexGrow: 0.5,
       padding: theme.spacing(3),
-      flexShrink: 0,
+      flexShrink: 0.5,
+      width: "75%",
     },
     title: {
       flexGrow: 1,

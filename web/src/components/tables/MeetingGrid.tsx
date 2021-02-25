@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DataGrid, ColDef } from "@material-ui/data-grid";
 import { useAllMeetingsQuery, useMeQuery } from "../../generated/graphql";
-import { Typography } from "@material-ui/core";
+import { CircularProgress, Typography } from "@material-ui/core";
 import _ from "lodash";
 
 const columns: ColDef[] = [
@@ -14,7 +14,7 @@ const columns: ColDef[] = [
 
 interface MeetingGridProps {}
 
-const DataGridDemo: React.FC<MeetingGridProps> = () => {
+const MeetingGrid: React.FC<MeetingGridProps> = () => {
   const [{ data: coachData }] = useMeQuery();
   const [{ data, fetching }] = useAllMeetingsQuery({
     variables: {
@@ -32,9 +32,17 @@ const DataGridDemo: React.FC<MeetingGridProps> = () => {
   let renderBody = null;
   let rows = null;
   if (!fetching && !data) {
-    renderBody = <Typography>Your query failed for some reason</Typography>;
+    renderBody = (
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <Typography>Your query failed for some reason..</Typography>
+      </div>
+    );
   } else if (!data && fetching) {
-    renderBody = <Typography>Loading ...</Typography>;
+    renderBody = (
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        <CircularProgress />
+      </div>
+    );
   } else {
     rows = data?.allMeetings.allMeetings.map((m) => {
       return _.pick(m, [
@@ -45,14 +53,11 @@ const DataGridDemo: React.FC<MeetingGridProps> = () => {
         "duration",
       ]);
     });
-    if (rows.length == null) {
-      renderBody = <Typography>You have no students</Typography>;
-    } else {
-      renderBody = <DataGrid rows={rows} columns={columns} pageSize={5} />;
-    }
+
+    renderBody = <DataGrid rows={rows} columns={columns} pageSize={5} />;
   }
 
   return <div style={{ height: 400, width: "100%" }}>{renderBody}</div>;
 };
 
-export default DataGridDemo;
+export default MeetingGrid;
