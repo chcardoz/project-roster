@@ -1,7 +1,7 @@
 import * as React from "react";
-import { DataGrid, ColDef } from "@material-ui/data-grid";
+import { DataGrid, ColDef, CellParams, GridApi } from "@material-ui/data-grid";
 import { useAllStudentsQuery, useMeQuery } from "../../generated/graphql";
-import { CircularProgress, Typography } from "@material-ui/core";
+import { Button, CircularProgress, Typography } from "@material-ui/core";
 import _ from "lodash";
 
 const columns: ColDef[] = [
@@ -12,6 +12,31 @@ const columns: ColDef[] = [
   { field: "population", headerName: "Population", width: 130 },
   { field: "meetingFrequency", headerName: "Meeting Frequency", width: 130 },
   { field: "modeOfMeeting", headerName: "Mode of Meeting", width: 130 },
+  {
+    field: "",
+    headerName: "Actions",
+    sortable: false,
+    width: 100,
+    disableClickEventBubbling: true,
+    renderCell: (params: CellParams) => {
+      const onClick = () => {
+        const api: GridApi = params.api;
+        const fields = api
+          .getAllColumns()
+          .map((c) => c.field)
+          .filter((c) => c !== "__check__" && !!c);
+        const thisRow = {};
+
+        fields.forEach((f) => {
+          thisRow[f] = params.getValue(f);
+        });
+
+        return alert(JSON.stringify(thisRow, null, 4));
+      };
+
+      return <Button onClick={onClick}>Click</Button>;
+    },
+  },
 ];
 
 interface StudentGridProps {}
@@ -32,7 +57,7 @@ const StudentGrid: React.FC<StudentGridProps> = () => {
   });
 
   let renderBody = null;
-  let rows = null;
+  let rows = [];
   if (!fetching && !data) {
     renderBody = (
       <div style={{ display: "flex", justifyContent: "space-around" }}>
@@ -41,9 +66,7 @@ const StudentGrid: React.FC<StudentGridProps> = () => {
     );
   } else if (!data && fetching) {
     renderBody = (
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <CircularProgress />
-      </div>
+      <DataGrid rows={rows} columns={columns} pageSize={5} loading />
     );
   } else {
     rows = data?.allStudents.allStudents.map((m) => {
