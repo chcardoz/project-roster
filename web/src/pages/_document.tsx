@@ -1,15 +1,22 @@
-import { ColorModeScript } from "@chakra-ui/react";
-import NextDocument, { Head, Html, Main, NextScript } from "next/document";
+import { ServerStyleSheets } from "@material-ui/core";
+import Document, { Main, Html, NextScript } from "next/document";
+import { Head } from "next/document";
 import React from "react";
+import theme from "../theme";
 
-export default class Document extends NextDocument {
+export default class MyDocument extends Document {
   render() {
     return (
       <Html>
-        <Head />
+        <Head>
+          {/* PWA primary color */}
+          <meta name="theme-color" content={theme.palette.primary.main} />
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          />
+        </Head>
         <body>
-          {/* Make Color mode to persists when you refresh the page. */}
-          <ColorModeScript initialColorMode="light" />
           <Main />
           <NextScript />
         </body>
@@ -17,3 +24,28 @@ export default class Document extends NextDocument {
     );
   }
 }
+
+// `getInitialProps` belongs to `_document` (instead of `_app`),
+// it's compatible with server-side generation (SSG).
+MyDocument.getInitialProps = async (ctx) => {
+  const sheets = new ServerStyleSheets();
+  const originalRenderPage = ctx.renderPage;
+
+  ctx.renderPage = () =>
+    originalRenderPage({
+      enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
+    });
+
+  const initialProps = await Document.getInitialProps(ctx);
+
+  return {
+    ...initialProps,
+    // Styles fragment is rendered after the app and page rendering finish.
+    styles: [
+      <React.Fragment key="styles">
+        {initialProps.styles}
+        {sheets.getStyleElement()}
+      </React.Fragment>,
+    ],
+  };
+};

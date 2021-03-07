@@ -1,98 +1,143 @@
-import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import {
-  Flex,
-  useColorMode,
-  Box,
+  AppBar,
   Button,
-  HStack,
-  useDisclosure,
-  Spacer,
-  Heading,
-  Skeleton,
-} from "@chakra-ui/react";
+  Divider,
+  Drawer,
+  IconButton,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Menu as MenuIcon,
+} from "@material-ui/icons";
+import clsx from "clsx";
 import React from "react";
 import { useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
-import { CoachLinks } from "./CoachLinks";
-import LoginModal from "../modals/LoginModal";
-import { RegisterModal } from "../modals/RegisterModal";
-import { UserAvatar } from "../UserAvatar";
-import { CoordinatorLinks } from "./CoordinatorLinks";
+import Login from "../dialogs/Login";
+import RecordMeeting from "../dialogs/RecordMeeting";
+import { UserSettings } from "./UserSettings";
+import { CoachList } from "./CoachList";
+import { CoordinatorList } from "./CoordinatorList";
+import { useStyles } from "../../styles/navbar";
+import RecordOutreach from "../dialogs/RecordOutreach";
 
 interface NavBarProps {}
 
-export const Navbar: React.FC<NavBarProps> = () => {
+export const Navbar: React.FC<NavBarProps> = ({ children }) => {
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),
   });
-  const {
-    isOpen: isOpenRegister,
-    onOpen: onOpenRegister,
-    onClose: onCloseRegister,
-  } = useDisclosure();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
-  const bgColor = { light: "whitesmoke", dark: "indigo.500" };
-  const textColor = { light: "black", dark: "white" };
+  const classes = useStyles();
+  const theme = useTheme();
+  const [open, setOpen] = React.useState(false);
+  const [loginOpen, setLoginOpen] = React.useState(false);
+  const [registerOpen, setRegisterOpen] = React.useState(false);
+
+  const handleLoginOpen = () => {
+    setLoginOpen(true);
+  };
+
+  const handleLoginClose = () => {
+    setLoginOpen(false);
+  };
+
+  const handleRegisterOpen = () => {
+    setRegisterOpen(true);
+  };
+
+  const handleRegisterClose = () => {
+    setRegisterOpen(false);
+  };
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   let body = null;
-  let links = null;
+  let list = null;
   if (!data?.currentCoach) {
     body = (
       <>
-        <HStack>
-          <Skeleton rounded="full" isLoaded={!fetching}>
-            <Button onClick={onOpen} rounded="full">
-              Login
-            </Button>
-          </Skeleton>
-          <Skeleton rounded="full" isLoaded={!fetching}>
-            <Button ml={2} onClick={onOpenRegister} rounded="full">
-              Register
-            </Button>
-          </Skeleton>
-        </HStack>
-        <LoginModal onClose={onClose} isOpen={isOpen} />
-        <RegisterModal onClose={onCloseRegister} isOpen={isOpenRegister} />
+        <Button onClick={handleLoginOpen} color="inherit">
+          Login
+        </Button>
+        <Button onClick={handleRegisterOpen} color="inherit">
+          Register
+        </Button>
+        <Login open={loginOpen} handleClose={handleLoginClose} />
+        {/* <Register open={registerOpen} handleClose={handleRegisterClose} /> */}
+        <RecordOutreach open={registerOpen} handleClose={handleRegisterClose} />
       </>
     );
+    list = <CoachList />;
   } else {
-    body = <UserAvatar color={textColor[colorMode]} data={data} />;
+    body = <UserSettings />;
     if (data?.currentCoach.isCoordinator) {
-      links = <CoordinatorLinks textColor={textColor[colorMode]} />;
+      list = <CoordinatorList />;
     } else {
-      links = <CoachLinks textColor={textColor[colorMode]} />;
+      list = <CoachList />;
     }
   }
 
   return (
-    <Flex
-      w="100vw"
-      bg={bgColor[colorMode]}
-      align="center"
-      color={textColor[colorMode]}
-      justify="center"
-      fontSize={["md", "lg", "xl", "xl"]}
-      h="7vh"
-      p={2}
-      zIndex={2}
-      position="sticky"
-      top="0"
-    >
-      <Box p={2}>
-        <Heading>ROSTER</Heading>
-      </Box>
-      <Spacer />
-      {links}
-      <Spacer />
-      <HStack>
-        <Box pr={8}>{body}</Box>
-        <Box>
-          <Button rounded="full" onClick={toggleColorMode}>
-            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-          </Button>
-        </Box>
-      </HStack>
-    </Flex>
+    <>
+      <AppBar
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: open,
+        })}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, {
+              [classes.hide]: open,
+            })}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" className={classes.title} noWrap>
+            Roster management
+          </Typography>
+          {body}
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        })}
+        classes={{
+          paper: clsx({
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          }),
+        }}
+      >
+        <div className={classes.toolbar}>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "rtl" ? <ChevronRight /> : <ChevronLeft />}
+          </IconButton>
+        </div>
+        <Divider />
+        {list}
+      </Drawer>
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        {children}
+      </main>
+    </>
   );
 };
