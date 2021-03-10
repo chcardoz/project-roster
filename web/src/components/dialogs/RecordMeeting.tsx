@@ -1,3 +1,4 @@
+import DateFnsUtils from "@date-io/date-fns";
 import {
   Button,
   createStyles,
@@ -7,19 +8,16 @@ import {
   DialogTitle,
   makeStyles,
 } from "@material-ui/core";
-import { Form, Formik } from "formik";
-import React from "react";
-import { InputField } from "../input/InputField";
-import { toErrorMap } from "../../utils/toErrorMap";
-import { useCreateMeetingMutation } from "../../generated/graphql";
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../../utils/createUrqlClient";
-import DateFnsUtils from "@date-io/date-fns";
-import "date-fns";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
+import "date-fns";
+import { Form, Formik } from "formik";
+import React from "react";
+import { useCreateMeetingMutation } from "../../generated/graphql";
+import { toErrorMap } from "../../utils/toErrorMap";
+import { InputField } from "../input/InputField";
 
 interface MeetingProps {
   open: boolean;
@@ -128,4 +126,4 @@ const RecordMeeting: React.FC<MeetingProps> = ({ open, handleClose }) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(RecordMeeting);
+export default RecordMeeting;

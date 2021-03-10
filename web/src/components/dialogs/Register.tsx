@@ -7,11 +7,9 @@ import {
   DialogTitle,
   makeStyles,
 } from "@material-ui/core";
-import { Formik, Form } from "formik";
-import { withUrqlClient } from "next-urql";
+import { Form, Formik } from "formik";
 import React from "react";
 import { useRegisterMutation } from "../../generated/graphql";
-import { createUrqlClient } from "../../utils/createUrqlClient";
 import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../input/InputField";
 
@@ -104,4 +102,4 @@ const Register: React.FC<RegisterProps> = ({ open, handleClose }) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(Register);
+export default Register;

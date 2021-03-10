@@ -16,14 +16,13 @@ import {
 import clsx from "clsx";
 import React from "react";
 import { useMeQuery } from "../../generated/graphql";
+import { useStyles } from "../../styles/navbar";
 import { isServer } from "../../utils/isServer";
 import Login from "../dialogs/Login";
-import RecordMeeting from "../dialogs/RecordMeeting";
-import { UserSettings } from "./UserSettings";
+import Register from "../dialogs/Register";
 import { CoachList } from "./CoachList";
 import { CoordinatorList } from "./CoordinatorList";
-import { useStyles } from "../../styles/navbar";
-import RecordOutreach from "../dialogs/RecordOutreach";
+import { UserSettings } from "./UserSettings";
 
 interface NavBarProps {}
 
@@ -73,8 +72,7 @@ export const Navbar: React.FC<NavBarProps> = ({ children }) => {
           Register
         </Button>
         <Login open={loginOpen} handleClose={handleLoginClose} />
-        {/* <Register open={registerOpen} handleClose={handleRegisterClose} /> */}
-        <RecordOutreach open={registerOpen} handleClose={handleRegisterClose} />
+        <Register open={registerOpen} handleClose={handleRegisterClose} />
       </>
     );
     list = <CoachList />;

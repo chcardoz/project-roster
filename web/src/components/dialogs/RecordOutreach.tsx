@@ -1,3 +1,4 @@
+import DateFnsUtils from "@date-io/date-fns";
 import {
   Button,
   createStyles,
@@ -8,19 +9,16 @@ import {
   makeStyles,
   MenuItem,
 } from "@material-ui/core";
-import { Form, Formik } from "formik";
-import React from "react";
-import { InputField } from "../input/InputField";
-import { toErrorMap } from "../../utils/toErrorMap";
-import { useCreateOutreachMutation } from "../../generated/graphql";
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../../utils/createUrqlClient";
-import DateFnsUtils from "@date-io/date-fns";
-import "date-fns";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
+import "date-fns";
+import { Form, Formik } from "formik";
+import React from "react";
+import { useCreateOutreachMutation } from "../../generated/graphql";
+import { toErrorMap } from "../../utils/toErrorMap";
+import { InputField } from "../input/InputField";
 import { SelectField } from "../input/SelectField";
 
 interface OutreachProps {
@@ -135,4 +133,4 @@ const RecordOutreach: React.FC<OutreachProps> = ({ open, handleClose }) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(RecordOutreach);
+export default RecordOutreach;
